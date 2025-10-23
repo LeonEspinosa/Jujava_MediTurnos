@@ -12,7 +12,7 @@
   Ventana Principal (Chrome de la App)
   Controlador: com.example.myjavafx.controller.MainViewController
 -->
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.myjavafx.controller.MainViewController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jujava.mediturnos.presentacion.controladores.MainViewController">
     <left>
         <!-- Menú de Navegación Izquierdo -->
         <VBox fx:id="menuBox" prefWidth="180.0" spacing="10.0" styleClass="menu-bar" BorderPane.alignment="CENTER">

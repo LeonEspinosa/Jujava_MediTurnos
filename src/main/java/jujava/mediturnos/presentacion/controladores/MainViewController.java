@@ -1,7 +1,7 @@
 package jujava.mediturnos.presentacion.controladores;
 
-import com.example.myjavafx.model.Usuario;
-import com.example.myjavafx.view.AppMain;
+import jujava.mediturnos.presentacion.modelos.Usuario;
+import jujava.mediturnos.presentacion.vista.AppMain;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,39 +15,37 @@ public class MainViewController {
     @FXML
     private BorderPane contentArea;
 
-    private MainController dataController; // El controlador de lógica/datos
+    private MainController dataController; // Controlador de lógica/datos
 
     @FXML
     private void initialize() {
-        // ERROR 1 ARREGLADO: El constructor de MainController ahora está vacío.
+        // Inicializamos el controlador de datos
         this.dataController = new MainController();
 
+        // Carga inicial de la vista de listado
         handleListar();
     }
 
     // --- Métodos de Navegación ---
-    // ERRORES 6 y 7 ARREGLADOS: Se cambiaron de 'private' a 'public'
-
     @FXML
     public void handleListar() {
-        loadView("listado-view.fxml", null);
+        loadView("/jujava/mediturnos/listado-view.fxml", null);
     }
 
     @FXML
     public void handleRegistro() {
-        loadView("formulario-view.fxml", null);
+        loadView("/jujava/mediturnos/formulario-view.fxml", null);
     }
 
     @FXML
     public void handleModificacion() {
-        // ERRORES 2 y 3 ARREGLADOS:
-        // Los métodos getUsuarioSeleccionado() y showAlert() ahora existen en dataController
         Usuario seleccionado = dataController.getUsuarioSeleccionado();
         if (seleccionado == null) {
-            dataController.showAlert(javafx.scene.control.Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar un usuario en la vista de Listado para modificar.");
+            dataController.showAlert(javafx.scene.control.Alert.AlertType.WARNING,
+                    "Advertencia", "Debe seleccionar un usuario en la vista de Listado para modificar.");
             return;
         }
-        loadView("formulario-view.fxml", seleccionado);
+        loadView("/jujava/mediturnos/formulario-view.fxml", seleccionado);
     }
 
     @FXML
@@ -55,19 +53,22 @@ public class MainViewController {
         Platform.exit();
     }
 
-    private void loadView(String fxmlFile, Usuario usuario) {
+    /**
+     * Carga dinámicamente otra vista en el área central.
+     * @param fxmlPath ruta absoluta desde resources
+     * @param usuario usuario opcional para pasar datos
+     */
+    private void loadView(String fxmlPath, Usuario usuario) {
         try {
-            FXMLLoader loader = new FXMLLoader();
-            // Usamos una ruta absoluta desde la raíz de 'resources'
-            loader.setLocation(AppMain.class.getResource("/com/example/myjavafx/view/" + fxmlFile));
+            FXMLLoader loader = new FXMLLoader(AppMain.class.getResource(fxmlPath));
 
             Node view = loader.load();
 
-            // Pasa el control (Inyección de Dependencia)
-            if (fxmlFile.equals("listado-view.fxml")) {
+            // Inyección de controladores según la vista
+            if (fxmlPath.endsWith("listado-view.fxml")) {
                 ListadoViewController controller = loader.getController();
                 controller.init(dataController);
-            } else if (fxmlFile.equals("formulario-view.fxml")) {
+            } else if (fxmlPath.endsWith("formulario-view.fxml")) {
                 FormularioViewController controller = loader.getController();
                 controller.initData(dataController, this, usuario);
             }
@@ -76,9 +77,8 @@ public class MainViewController {
 
         } catch (IOException e) {
             e.printStackTrace();
-            // ERROR 4 ARREGLADO: showAlert() ahora existe
-            dataController.showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Error", "No se pudo cargar la vista: " + fxmlFile);
+            dataController.showAlert(javafx.scene.control.Alert.AlertType.ERROR,
+                    "Error", "No se pudo cargar la vista: " + fxmlPath);
         }
     }
 }
-

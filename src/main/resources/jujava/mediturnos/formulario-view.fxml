@@ -16,7 +16,7 @@
   Vista de Formulario (Alta y Modificación)
   Controlador: com.example.myjavafx.controller.FormularioViewController
 -->
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="15.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.myjavafx.controller.FormularioViewController">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="15.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jujava.mediturnos.presentacion.controladores.FormularioViewController">
     <children>
         <Label fx:id="lblTitulo" styleClass="view-title" text="Formulario de Alta (Registro)">
             <!-- BLOQUE <font> ELIMINADO DE AQUÍ -->

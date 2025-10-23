@@ -1,6 +1,6 @@
 package jujava.mediturnos.presentacion.controladores;
 
-import com.example.myjavafx.model.Usuario;
+import jujava.mediturnos.presentacion.modelos.Usuario;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;

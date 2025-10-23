@@ -1,6 +1,6 @@
 package jujava.mediturnos.presentacion.controladores;
 
-import com.example.myjavafx.model.Usuario;
+import jujava.mediturnos.presentacion.modelos.Usuario;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;

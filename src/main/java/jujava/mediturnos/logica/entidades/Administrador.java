@@ -27,7 +27,7 @@ public class Administrador extends Persona {
                 ", telefono:" + getTelefono() +
                 ", area:" + getArea();
     }
-    private GestorUsuario gestor=new GestorUsuario();
+    public GestorUsuario gestor=new GestorUsuario();
     //REGISTRAR MEDICO
     public void registrarMedico(Medico m){
         if(gestor.validarDNIUnico(String.valueOf(m.getDni()))){

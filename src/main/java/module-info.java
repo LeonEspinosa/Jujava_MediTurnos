@@ -1,5 +1,3 @@
-// El nombre del módulo parece ser com.example.myjavafx según su FXML
-// Si su módulo se llama 'jujava.mediturnos', úselo en su lugar.
 module com.example.myjavafx {
     requires javafx.controls;
     requires javafx.fxml;
@@ -13,10 +11,6 @@ module com.example.myjavafx {
     opens jujava.mediturnos to javafx.fxml;
     exports jujava.mediturnos;
 
-    // Abrir la capa de Presentación
-    opens jujava.mediturnos.presentacion to javafx.fxml;
-    exports jujava.mediturnos.presentacion;
-
     // Abrir Controladores (para que FXML los encuentre)
     opens jujava.mediturnos.presentacion.controladores to javafx.fxml;
     exports jujava.mediturnos.presentacion.controladores;
@@ -25,7 +19,11 @@ module com.example.myjavafx {
     opens jujava.mediturnos.presentacion.modelos to javafx.base;
     exports jujava.mediturnos.presentacion.modelos;
 
-    // Exportar lógica y datos (opcional si solo presentación los usa)
+    // Abrir Vistas
+    opens jujava.mediturnos.presentacion.vista to javafx.fxml;
+    exports jujava.mediturnos.presentacion.vista;
+
+    // Exportar lógica y datos
     exports jujava.mediturnos.logica;
     exports jujava.mediturnos.logica.entidades;
     exports jujava.mediturnos.datos;
