@@ -1,4 +1,4 @@
-package jujava.mediturnos.logica;
+package jujava.mediturnos.logica.entidades;
 
 public class Paciente extends Persona {
     private String obraSocial;
@@ -8,6 +8,5 @@ public class Paciente extends Persona {
         this.obraSocial = obraSocial;
 
     public String getObraSocial() {
-        return obraSocial;}
-
-    }
+            return obraSocial;
+        }

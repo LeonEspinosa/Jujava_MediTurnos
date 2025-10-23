@@ -2,7 +2,8 @@ package jujava.mediturnos.datos;
 
 import java.io.*;
 import java.util.*;
-public class HelperCSV {
+import jujava.mediturnos.logica.*;
+public class AccesoDatos {
     private static final String rutaPacientes = "archivos/pacientes.csv";
     private static final String rutaMedicos = "archivos/medicos.csv";
     private static final String rutaAdministrativos = "archivos/administrativos.csv";

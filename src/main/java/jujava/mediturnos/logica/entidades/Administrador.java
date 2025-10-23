@@ -1,6 +1,9 @@
-package jujava.mediturnos.logica;
+package jujava.mediturnos.logica.entidades;
 
-public class Administrador extends Usuario{
+import jujava.mediturnos.datos.AccesoDatos;
+import jujava.mediturnos.logica.GestorUsuario;
+
+public class Administrador extends Persona {
 
     String area;
     public Administrador() {}
@@ -29,39 +32,39 @@ public class Administrador extends Usuario{
     public void registrarMedico(Medico m){
         if(gestor.validarDNIUnico(String.valueOf(m.getDni()))){
             gestor.medicos.add(m);
-            HelperCSV.guardarMedicos(gestor.medicos);}}
+            AccesoDatos.guardarMedicos(gestor.medicos);}}
     //REGISTRAR ADMINISTRADOR
     public void registrarAdministrador(Administrador a){
 
         if(gestor.validarDNIUnico(String.valueOf(a.getDni()))){
             gestor.administradores.add(a);
-            HelperCSV.guardarAdministradores(gestor.administradores);}}
+            AccesoDatos.guardarAdministradores(gestor.administradores);}}
 
 
     //MODIFICAR MEDICO
     public void modificarMedico(int DNI,String nombre, String apellido, int telefono,String matricula,String especialidad){
 
-        Usuario usuario=gestor.buscarMedicoPorDNI(DNI);
-        if(usuario!=null && usuario instanceof Medico ){
-            Medico medico=(Medico) usuario;
+        Persona persona =gestor.buscarMedicoPorDNI(DNI);
+        if(persona !=null && persona instanceof Medico ){
+            Medico medico=(Medico) persona;
             medico.setNombre(nombre);
             medico.setApellido(apellido);
             medico.setTelefono(telefono);
             medico.setMatricula(matricula);
             medico.setEspecialidad(especialidad);
-            HelperCSV.guardarMedicos(gestor.medicos);}}
+            AccesoDatos.guardarMedicos(gestor.medicos);}}
 
     //MODIFICAR ADMINISTRADOR
     public void modificarAdministrador( int DNI,String nombre, String apellido, int telefono,String area){
 
-        Usuario usuario=gestor.buscarUsuarioPorDNI(DNI);
-        if(usuario!=null && usuario instanceof Administrador ){
-            Administrador administrador=(Administrador) usuario;
+        Persona persona =gestor.buscarUsuarioPorDNI(DNI);
+        if(persona !=null && persona instanceof Administrador ){
+            Administrador administrador=(Administrador) persona;
             administrador.setNombre(nombre);
             administrador.setApellido(apellido);
             administrador.setTelefono(telefono);
             administrador.setArea(area);
-            HelperCSV.guardarAdministradores(gestor.administradores);}}
+            AccesoDatos.guardarAdministradores(gestor.administradores);}}
 
 
 

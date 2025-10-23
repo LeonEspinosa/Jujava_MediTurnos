@@ -1,4 +1,4 @@
-package jujava.mediturnos.presentacion.vista;
+package jujava.mediturnos.presentacion;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

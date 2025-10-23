@@ -1,3 +1,5 @@
+// El nombre del módulo parece ser com.example.myjavafx según su FXML
+// Si su módulo se llama 'jujava.mediturnos', úselo en su lugar.
 module com.example.myjavafx {
     requires javafx.controls;
     requires javafx.fxml;
@@ -7,15 +9,24 @@ module com.example.myjavafx {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
 
-    // 🔹 Abre los paquetes necesarios para FXML y controladores
-    opens com.example.myjavafx to javafx.fxml;
-    opens com.example.myjavafx.view to javafx.fxml;
-    opens com.example.myjavafx.controller to javafx.fxml;
-    opens com.example.myjavafx.model to javafx.base; // solo este usa javafx.base
+    // Abrir la raíz para el Launcher
+    opens jujava.mediturnos to javafx.fxml;
+    exports jujava.mediturnos;
 
-    // 🔹 Exporta los paquetes que otros módulos pueden usar
-    exports com.example.myjavafx;
-    exports com.example.myjavafx.view;
-    exports com.example.myjavafx.controller;
-    exports com.example.myjavafx.model;
+    // Abrir la capa de Presentación
+    opens jujava.mediturnos.presentacion to javafx.fxml;
+    exports jujava.mediturnos.presentacion;
+
+    // Abrir Controladores (para que FXML los encuentre)
+    opens jujava.mediturnos.presentacion.controladores to javafx.fxml;
+    exports jujava.mediturnos.presentacion.controladores;
+
+    // Abrir Modelos de Vista (para JavaFX Property binding)
+    opens jujava.mediturnos.presentacion.modelos to javafx.base;
+    exports jujava.mediturnos.presentacion.modelos;
+
+    // Exportar lógica y datos (opcional si solo presentación los usa)
+    exports jujava.mediturnos.logica;
+    exports jujava.mediturnos.logica.entidades;
+    exports jujava.mediturnos.datos;
 }

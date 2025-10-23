@@ -1,6 +1,8 @@
-package jujava.mediturnos.logica;
+package jujava.mediturnos.logica.entidades;
 
-public class Medico extends Usuario {
+import jujava.mediturnos.datos.AccesoDatos;
+
+public class Medico extends Persona {
     String matricula;
     String especialidad;
     public Medico() {}
@@ -31,19 +33,19 @@ public class Medico extends Usuario {
     public void registrarMedico(Medico m){
         if(gestor != null && gestor.validarDNIUnico(String.valueOf(m.getDni()))){
             gestor.medicos.add(m);
-            HelperCSV.guardarMedicos(gestor.getMedicos());
+            AccesoDatos.guardarMedicos(gestor.getMedicos());
         }
     }
     public void modificarMedico(int DNI, String nombre, String apellido, int telefono, String matricula, String especialidad){
         if(gestor != null) {
-            Usuario usuario = gestor.buscarMedicoPorDNI(DNI);
-            if (usuario instanceof Medico medico) {
+            Persona persona = gestor.buscarMedicoPorDNI(DNI);
+            if (persona instanceof Medico medico) {
                 medico.setNombre(nombre);
                 medico.setApellido(apellido);
                 medico.setTelefono(telefono);
                 medico.setMatricula(matricula);
                 medico.setEspecialidad(especialidad);
-                HelperCSV.guardarMedicos(gestor.getMedicos());
+                AccesoDatos.guardarMedicos(gestor.getMedicos());
             }
         }
     }

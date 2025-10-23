@@ -1,15 +1,20 @@
 package jujava.mediturnos.logica;
 
-import java.util.ArrayList;
+import jujava.mediturnos.datos.AccesoDatos;
+import jujava.mediturnos.logica.entidades.Administrador;
+import jujava.mediturnos.logica.entidades.Medico;
+import jujava.mediturnos.logica.entidades.Paciente;
+import jujava.mediturnos.logica.entidades.Persona;
+
 import java.util.List;
 public class GestorUsuario {
     public List<Paciente> pacientes;
     public List<Medico> medicos;
     public List<Administrador> administradores;
     public GestorUsuario() {
-        this.pacientes = HelperCSV.cargarPacientes();
-        this.medicos = HelperCSV.cargarMedicos();
-        this.administradores = HelperCSV.cargarAdministradores();
+        this.pacientes = AccesoDatos.cargarPacientes();
+        this.medicos = AccesoDatos.cargarMedicos();
+        this.administradores = AccesoDatos.cargarAdministradores();
     }
     public List<Paciente> getPacientes() { return pacientes; }
     public List<Medico> getMedicos() { return medicos; }
@@ -31,7 +36,7 @@ public class GestorUsuario {
         for (Administrador a : administradores) if (a.getDni() == dni) return false;
         return true;
     }
-    public Usuario buscarUsuarioPorDNI(int dni) {
+    public Persona buscarUsuarioPorDNI(int dni) {
         for (Paciente p : pacientes) if (p.getDni() == dni) return p;
         for (Medico m : medicos) if (m.getDni() == dni) return m;
         for (Administrador a : administradores) if (a.getDni() == dni) return a;
@@ -46,17 +51,17 @@ public class GestorUsuario {
         return null;
     }
     public void eliminarUsuario(int DNI){
-        Usuario usuario = buscarUsuarioPorDNI(DNI);
-        if (usuario != null) {
-            if (usuario instanceof Paciente) {
-                pacientes.remove(usuario);
-                HelperCSV.guardarPacientes(pacientes);
-            } else if (usuario instanceof Medico) {
-                medicos.remove(usuario);
-                HelperCSV.guardarMedicos(medicos);
-            } else if (usuario instanceof Administrador) {
-                administradores.remove(usuario);
-                HelperCSV.guardarAdministradores(administradores);
+        Persona persona = buscarUsuarioPorDNI(DNI);
+        if (persona != null) {
+            if (persona instanceof Paciente) {
+                pacientes.remove(persona);
+                AccesoDatos.guardarPacientes(pacientes);
+            } else if (persona instanceof Medico) {
+                medicos.remove(persona);
+                AccesoDatos.guardarMedicos(medicos);
+            } else if (persona instanceof Administrador) {
+                administradores.remove(persona);
+                AccesoDatos.guardarAdministradores(administradores);
             }
         }
     }
@@ -64,19 +69,19 @@ public class GestorUsuario {
     public void agregarPaciente(Paciente p){
         if(validarDNIUnico(String.valueOf(p.getDni()))){
             pacientes.add(p);
-            HelperCSV.guardarPacientes(pacientes);
+            AccesoDatos.guardarPacientes(pacientes);
         } else System.out.println("DNI ya existente.");
     }
     public void agregarMedico(Medico m){
         if(validarDNIUnico(String.valueOf(m.getDni()))){
             medicos.add(m);
-            HelperCSV.guardarMedicos(medicos);
+            AccesoDatos.guardarMedicos(medicos);
         } else System.out.println("DNI ya existente.");
     }
     public void agregarAdministrador(Administrador a){
         if(validarDNIUnico(String.valueOf(a.getDni()))){
             administradores.add(a);
-            HelperCSV.guardarAdministradores(administradores);
+            AccesoDatos.guardarAdministradores(administradores);
         } else System.out.println("DNI ya existente.");
     }
 }

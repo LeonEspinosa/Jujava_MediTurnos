@@ -1,14 +1,17 @@
-package jujava.mediturnos.logica;
+package jujava.mediturnos.logica.entidades;
 
-public class Usuario {
+import jujava.mediturnos.datos.AccesoDatos;
+import jujava.mediturnos.logica.GestorUsuario;
+
+public class Persona {
     int dni;
     String nombre;
     String apellido;
     char genero;
     int telefono;
     GestorUsuario gestor; // ahora se pasa al crear la instancia
-    public Usuario() {}
-    public Usuario(String nombre, String apellido, int dni, char genero, int telefono) {
+    public Persona() {}
+    public Persona(String nombre, String apellido, int dni, char genero, int telefono) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;
@@ -56,7 +59,7 @@ public class Usuario {
     public void registrarPaciente(Paciente p) {
         if (gestor != null && gestor.validarDNIUnico(String.valueOf(p.getDni()))) {
             gestor.pacientes.add(p);
-            HelperCSV.guardarPacientes(gestor.getPacientes());
+            AccesoDatos.guardarPacientes(gestor.getPacientes());
         }
     }
     // MODIFICAR PACIENTE
@@ -68,7 +71,7 @@ public class Usuario {
                 paciente.setApellido(apellido);
                 paciente.setTelefono(telefono);
                 paciente.setObraSocial(obraSocial);
-                HelperCSV.guardarPacientes(gestor.getPacientes());
+                AccesoDatos.guardarPacientes(gestor.getPacientes());
             }
         }
     }
