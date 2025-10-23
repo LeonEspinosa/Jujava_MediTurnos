@@ -1,0 +1,113 @@
+/* Estilos Globales */
+.root {
+    -fx-font-family: 'System';
+    -fx-base: #FFFFFF; /* Base blanca */
+    -fx-background: #F4F7FC; /* Fondo general ligero */
+}
+
+/* Títulos de las Vistas */
+.view-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50; /* Azul oscuro */
+}
+
+/* --- Barra de Menú Lateral --- */
+.menu-bar {
+    -fx-background-color: #34495e; /* Azul oscuro/gris */
+    -fx-background-radius: 0 10 10 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 3);
+}
+
+.menu-header {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ecf0f1; /* Blanco ligero */
+    -fx-padding: 5 0 0 0;
+}
+
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ecf0f1; /* Blanco ligero */
+    -fx-font-size: 14px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-radius: 5;
+    -fx-padding: 8 12 8 12;
+}
+.menu-button:hover {
+    -fx-background-color: #4e6a85; /* Azul más claro al pasar el mouse */
+}
+.menu-button:pressed {
+    -fx-background-color: #2c3e50;
+}
+
+/* Botón de Salir (Estilo Peligro) */
+.menu-button-danger {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e74c3c; /* Rojo */
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-radius: 5;
+    -fx-padding: 8 12 8 12;
+}
+.menu-button-danger:hover {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+}
+
+
+/* --- Estilos de Contenido (Botones, Campos) --- */
+
+/* Botón Primario (Ej. Guardar, Buscar) */
+.button-primary {
+    -fx-background-color: #3498db; /* Azul */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-padding: 8 15 8 15;
+}
+.button-primary:hover {
+    -fx-background-color: #2980b9;
+}
+
+/* Botón de Peligro (Ej. Eliminar) */
+.button-danger {
+    -fx-background-color: #e74c3c; /* Rojo */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-padding: 8 15 8 15;
+}
+.button-danger:hover {
+    -fx-background-color: #c0392b;
+}
+
+/* Campos de Texto y ComboBox */
+.text-field, .combo-box {
+    -fx-background-radius: 5;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 5;
+}
+.text-field:focused, .combo-box:focused {
+    -fx-border-color: #3498db;
+    -fx-border-width: 1.5;
+}
+
+/* Tabla */
+.table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 8;
+}
+.table-view .column-header-background {
+    -fx-background-color: #F9FAFB;
+    -fx-background-radius: 8 8 0 0;
+}
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #555;
+}
