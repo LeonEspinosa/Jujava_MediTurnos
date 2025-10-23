@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>Jujava</groupId>
-    <artifactId>MediTurnos</artifactId>
+    <groupId>com.example</groupId>
+    <artifactId>MyJavaFX</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>MediTurnos</name>
+    <name>MyJavaFX</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -114,6 +114,19 @@
     </dependencies>
 
     <build>
+        <!-- ¡NUEVO! ESTE BLOQUE LE DICE A MAVEN QUE INCLUYA FXML Y CSS -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.fxml</include>
+                    <include>**/*.css</include>
+                    <include>**/*.png</include> <!-- Por si añadimos imágenes -->
+                </includes>
+            </resource>
+        </resources>
+        <!-- FIN DEL BLOQUE NUEVO -->
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -133,7 +146,8 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>jujava.mediturnos/jujava.mediturnos.HelloApplication</mainClass>
+                            <!-- ACTUALIZADO: Apunta a su Launcher, no a HelloApplication -->
+                            <mainClass>com.example.myjavafx/com.example.myjavafx.Launcher</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
@@ -147,3 +161,4 @@
         </plugins>
     </build>
 </project>
+
