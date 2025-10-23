@@ -1,5 +1,6 @@
 package jujava.mediturnos.presentacion.controladores;
 
+// ERROR 35: Importación corregida al DTO de presentación
 import jujava.mediturnos.presentacion.modelos.Usuario;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -25,6 +26,11 @@ public class FormularioViewController {
     private TextField txtNombre;
     @FXML
     private TextField txtApellido;
+    // Campos nuevos del FXML
+    @FXML
+    private TextField txtGenero;
+    @FXML
+    private TextField txtTelefono;
     @FXML
     private VBox vbDatosEspecificos;
     @FXML
@@ -34,7 +40,7 @@ public class FormularioViewController {
 
     private MainController dataController; // Para lógica de datos
     private MainViewController navigationController; // Para navegar
-    private Usuario usuarioActual;
+    private Usuario usuarioActual; // DTO de presentación
     private boolean esModificacion;
 
     /**
@@ -43,7 +49,7 @@ public class FormularioViewController {
     @FXML
     public void initialize() {
         // Poblar el ComboBox de Roles
-        cmbRol.getItems().addAll(Arrays.asList("Paciente", "Médico", "Administrativo"));
+        cmbRol.getItems().addAll(Arrays.asList("Paciente", "Médico", "Administrador"));
 
         // Listener para la lógica de campos dinámicos
         cmbRol.valueProperty().addListener((obs, oldVal, newVal) -> actualizarCamposDinamicos(newVal));
@@ -78,17 +84,22 @@ public class FormularioViewController {
             return;
         }
 
-        vbDatosEspecificos.setVisible(true);
         txtInfoExtra.setText("");
 
         if ("Médico".equals(rol)) {
+            vbDatosEspecificos.setVisible(true);
             lblInfoExtra.setText("Matrícula del Médico:");
             txtInfoExtra.setPromptText("Ej. 1234");
-        } else if ("Administrativo".equals(rol)) {
-            lblInfoExtra.setText("Sector del Administrativo:");
+        } else if ("Administrador".equals(rol)) {
+            vbDatosEspecificos.setVisible(true);
+            lblInfoExtra.setText("Área del Administrador:");
             txtInfoExtra.setPromptText("Ej. Turnos");
+        } else if ("Paciente".equals(rol)) {
+            vbDatosEspecificos.setVisible(true);
+            lblInfoExtra.setText("Obra Social:");
+            txtInfoExtra.setPromptText("Ej. OSDE");
         } else {
-            // Paciente
+            // Rol no reconocido o nulo
             vbDatosEspecificos.setVisible(false);
         }
     }
@@ -101,10 +112,20 @@ public class FormularioViewController {
 
         txtDni.setText(usuarioActual.getDni());
         txtDni.setEditable(false);
-        txtDni.setStyle("-fx-background-color: #eeeeee;");
+        txtDni.setStyle("-fx-background-color: #eeeeee;"); // Estilo visual para DNI bloqueado
 
         txtNombre.setText(usuarioActual.getNombre());
         txtApellido.setText(usuarioActual.getApellido());
+
+        // Cargar Género y Teléfono
+        // Esta llamada al "puente" (MainController) busca en la lógica (GestorUsuario)
+        if (dataController != null) {
+            jujava.mediturnos.logica.entidades.Persona p = dataController.getPersonaLogica(Integer.parseInt(usuarioActual.getDni()));
+            if (p != null) {
+                txtGenero.setText(String.valueOf(p.getGenero()));
+                txtTelefono.setText(String.valueOf(p.getTelefono()));
+            }
+        }
 
         // Esto dispara el listener y llama a actualizarCamposDinamicos()
         cmbRol.setValue(usuarioActual.getRol());
@@ -113,30 +134,36 @@ public class FormularioViewController {
 
     @FXML
     private void handleGuardar() {
+        // 1. Recolectar datos de la UI
         String dni = txtDni.getText();
         String nombre = txtNombre.getText();
         String apellido = txtApellido.getText();
         String rol = cmbRol.getValue();
         String infoExtra = vbDatosEspecificos.isVisible() ? txtInfoExtra.getText() : "";
+        String genero = txtGenero.getText();
+        String telefono = txtTelefono.getText();
 
         Usuario usuarioParaGuardar;
 
         if (esModificacion) {
-            // Actualizamos el objeto existente
-            usuarioActual.setNombre(nombre);
-            usuarioActual.setApellido(apellido);
-            usuarioActual.setRol(rol);
-            usuarioActual.setInfoExtra(infoExtra);
+            // Si es modificación, usamos el DTO existente (usuarioActual)
+            // MainController se encargará de actualizar sus propiedades
             usuarioParaGuardar = usuarioActual;
+            // Actualizamos el DTO localmente ANTES de enviarlo
+            usuarioParaGuardar.setNombre(nombre);
+            usuarioParaGuardar.setApellido(apellido);
+            usuarioParaGuardar.setRol(rol);
+            usuarioParaGuardar.setInfoExtra(infoExtra);
         } else {
             // Creamos un nuevo DTO
             usuarioParaGuardar = new Usuario(dni, nombre, apellido, rol, infoExtra);
         }
 
-        // Enviamos al controlador de lógica para validar y guardar
-        boolean exito = dataController.guardarUsuario(usuarioParaGuardar, esModificacion);
+        // 2. Enviamos al "puente" (MainController)
+        // Pasamos el DTO y los datos extra (genero, telefono)
+        boolean exito = dataController.guardarUsuario(usuarioParaGuardar, genero, telefono, esModificacion);
 
-        // Si el guardado fue exitoso, navegamos de vuelta al listado
+        // 3. Si el guardado fue exitoso, navegamos de vuelta al listado
         if (exito) {
             navigationController.handleListar();
         }
@@ -148,3 +175,4 @@ public class FormularioViewController {
         navigationController.handleListar();
     }
 }
+

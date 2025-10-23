@@ -1,7 +1,6 @@
 package jujava.mediturnos.logica.entidades;
 
 import jujava.mediturnos.datos.AccesoDatos;
-import jujava.mediturnos.logica.GestorUsuario;
 
 public class Persona {
     int dni;
@@ -9,7 +8,7 @@ public class Persona {
     String apellido;
     char genero;
     int telefono;
-    GestorUsuario gestor; // ahora se pasa al crear la instancia
+
     public Persona() {}
     public Persona(String nombre, String apellido, int dni, char genero, int telefono) {
         this.nombre = nombre;
@@ -19,6 +18,7 @@ public class Persona {
         this.telefono = telefono;
     }
 
+    // --- Getters y Setters (Correctos) ---
     public int getDni() {
         return dni;
     }
@@ -49,31 +49,8 @@ public class Persona {
     public void setTelefono(int telefono) {
         this.telefono = telefono;
     }
-    public GestorUsuario getGestor() {
-        return gestor;
-    }
-    public void setGestor(GestorUsuario gestor) {
-        this.gestor = gestor;
-    }
-    // REGISTRAR PACIENTE
-    public void registrarPaciente(Paciente p) {
-        if (gestor != null && gestor.validarDNIUnico(String.valueOf(p.getDni()))) {
-            gestor.pacientes.add(p);
-            AccesoDatos.guardarPacientes(gestor.getPacientes());
-        }
-    }
-    // MODIFICAR PACIENTE
-    public void modificarPaciente(int DNI, String nombre, String apellido, int telefono, String obraSocial) {
-        if(gestor != null) {
-            Paciente paciente = gestor.buscarPacientePorDNI(DNI);
-            if (paciente != null) {
-                paciente.setNombre(nombre);
-                paciente.setApellido(apellido);
-                paciente.setTelefono(telefono);
-                paciente.setObraSocial(obraSocial);
-                AccesoDatos.guardarPacientes(gestor.getPacientes());
-            }
-        }
-    }
+
+    // ERROR 41: Toda la lógica de negocio (como registrar/modificar)
+    // se elimina de la entidad. Esto ahora vivirá en GestorUsuario.
 }
 

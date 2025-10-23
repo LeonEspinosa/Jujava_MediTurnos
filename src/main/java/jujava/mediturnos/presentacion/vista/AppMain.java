@@ -10,7 +10,7 @@ import java.io.IOException;
 
 /**
  * Vista Principal (Clase Application).
- * Carga el FXML principal (main-view.fxml)
+ * Ahora solo carga el FXML principal (main-view.fxml)
  * y adjunta la hoja de estilos CSS.
  */
 public class AppMain extends Application {
@@ -18,15 +18,20 @@ public class AppMain extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            // 1. Cargar el FXML de la ventana principal con ruta absoluta
-            FXMLLoader loader = new FXMLLoader(AppMain.class.getResource("/jujava/mediturnos/main-view.fxml"));
+            // 1. Cargar el FXML de la ventana principal
+            FXMLLoader loader = new FXMLLoader();
 
-            BorderPane rootLayout = loader.load();
+            // ERROR 26: La ruta a los recursos FXML estaba incorrecta.
+            // Debe apuntar a la raíz de 'resources' y luego al paquete.
+            loader.setLocation(AppMain.class.getResource("/jujava/mediturnos/main-view.fxml"));
+
+            BorderPane rootLayout = (BorderPane) loader.load();
 
             // 2. Crear la escena
             Scene scene = new Scene(rootLayout);
 
-            // 3. Cargar la hoja de estilos CSS también con ruta absoluta
+            // 3. (IMPORTANTE) Cargar la hoja de estilos CSS
+            // ERROR 27: La ruta al CSS también estaba incorrecta.
             String css = AppMain.class.getResource("/jujava/mediturnos/styles.css").toExternalForm();
             scene.getStylesheets().add(css);
 
@@ -42,8 +47,5 @@ public class AppMain extends Application {
             System.err.println("Asegúrese de que estén en 'src/main/resources/jujava/mediturnos/'");
         }
     }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
 }
+

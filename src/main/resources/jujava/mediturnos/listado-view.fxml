@@ -12,12 +12,11 @@
 
 <!--
   Vista de Listado y Búsqueda
-  Controlador: com.example.myjavafx.controller.ListadoViewController
+  Controlador: jujava.mediturnos.presentacion.controladores.ListadoViewController
 -->
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="15.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jujava.mediturnos.presentacion.controladores.ListadoViewController">
     <children>
         <Label styleClass="view-title" text="Listado de Usuarios">
-            <!-- BLOQUE <font> ELIMINADO DE AQUÍ -->
         </Label>
         <!-- Área de Búsqueda -->
         <HBox alignment="CENTER_LEFT" spacing="10.0">

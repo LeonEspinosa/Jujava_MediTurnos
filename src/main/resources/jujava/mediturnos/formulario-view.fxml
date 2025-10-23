@@ -14,12 +14,11 @@
 
 <!--
   Vista de Formulario (Alta y Modificación)
-  Controlador: com.example.myjavafx.controller.FormularioViewController
+  Controlador: jujava.mediturnos.presentacion.controladores.FormularioViewController
 -->
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="15.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jujava.mediturnos.presentacion.controladores.FormularioViewController">
     <children>
         <Label fx:id="lblTitulo" styleClass="view-title" text="Formulario de Alta (Registro)">
-            <!-- BLOQUE <font> ELIMINADO DE AQUÍ -->
         </Label>
         <!-- Formulario de Campos -->
         <GridPane hgap="10.0" vgap="10.0">
@@ -32,6 +31,10 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <!-- Nuevas filas para Género y Teléfono -->
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <!-- Fila para el VBox dinámico -->
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
@@ -39,12 +42,20 @@
                 <Label text="DNI:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
                 <Label text="Nombre:" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
                 <Label text="Apellido:" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                <!-- Campos nuevos -->
+                <Label text="Género (M/F):" GridPane.halignment="RIGHT" GridPane.rowIndex="4" />
+                <Label text="Teléfono:" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
+
                 <ComboBox fx:id="cmbRol" maxWidth="1.7976931348623157E308" promptText="Seleccione Rol" GridPane.columnIndex="1" />
-                <TextField fx:id="txtDni" promptText="DNI" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <TextField fx:id="txtDni" promptText="DNI (solo números)" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 <TextField fx:id="txtNombre" promptText="Nombre" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <TextField fx:id="txtApellido" promptText="Apellido" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <!-- Campos nuevos -->
+                <TextField fx:id="txtGenero" promptText="M o F" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <TextField fx:id="txtTelefono" promptText="Teléfono (solo números)" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
                 <!-- VBox para Campos Dinámicos -->
-                <VBox fx:id="vbDatosEspecificos" spacing="5.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" VBox.vgrow="ALWAYS">
+                <VBox fx:id="vbDatosEspecificos" spacing="5.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="6" VBox.vgrow="ALWAYS">
                     <children>
                         <Label fx:id="lblInfoExtra" text="Información Específica:" />
                         <TextField fx:id="txtInfoExtra" promptText="Dato específico del rol" />

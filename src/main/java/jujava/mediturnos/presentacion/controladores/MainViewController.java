@@ -1,6 +1,8 @@
 package jujava.mediturnos.presentacion.controladores;
 
+// ERROR 31: Importación corregida al DTO de presentación
 import jujava.mediturnos.presentacion.modelos.Usuario;
+// ERROR 32: Importación corregida a la clase AppMain correcta
 import jujava.mediturnos.presentacion.vista.AppMain;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -15,37 +17,36 @@ public class MainViewController {
     @FXML
     private BorderPane contentArea;
 
-    private MainController dataController; // Controlador de lógica/datos
+    private MainController dataController; // El controlador de lógica/datos
 
     @FXML
     private void initialize() {
-        // Inicializamos el controlador de datos
+        // AHORA SÍ: Esto crea el MainController, que a su vez cargará GestorUsuario.
         this.dataController = new MainController();
-
-        // Carga inicial de la vista de listado
+        // Carga la vista de listado por defecto
         handleListar();
     }
 
     // --- Métodos de Navegación ---
+
     @FXML
     public void handleListar() {
-        loadView("/jujava/mediturnos/listado-view.fxml", null);
+        loadView("listado-view.fxml", null);
     }
 
     @FXML
     public void handleRegistro() {
-        loadView("/jujava/mediturnos/formulario-view.fxml", null);
+        loadView("formulario-view.fxml", null);
     }
 
     @FXML
     public void handleModificacion() {
         Usuario seleccionado = dataController.getUsuarioSeleccionado();
         if (seleccionado == null) {
-            dataController.showAlert(javafx.scene.control.Alert.AlertType.WARNING,
-                    "Advertencia", "Debe seleccionar un usuario en la vista de Listado para modificar.");
+            dataController.showAlert(javafx.scene.control.Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar un usuario en la vista de Listado para modificar.");
             return;
         }
-        loadView("/jujava/mediturnos/formulario-view.fxml", seleccionado);
+        loadView("formulario-view.fxml", seleccionado);
     }
 
     @FXML
@@ -53,22 +54,19 @@ public class MainViewController {
         Platform.exit();
     }
 
-    /**
-     * Carga dinámicamente otra vista en el área central.
-     * @param fxmlPath ruta absoluta desde resources
-     * @param usuario usuario opcional para pasar datos
-     */
-    private void loadView(String fxmlPath, Usuario usuario) {
+    private void loadView(String fxmlFile, Usuario usuario) {
         try {
-            FXMLLoader loader = new FXMLLoader(AppMain.class.getResource(fxmlPath));
+            FXMLLoader loader = new FXMLLoader();
+            // ERROR 33: Ruta de recursos corregida
+            loader.setLocation(AppMain.class.getResource("/jujava/mediturnos/" + fxmlFile));
 
             Node view = loader.load();
 
-            // Inyección de controladores según la vista
-            if (fxmlPath.endsWith("listado-view.fxml")) {
+            // Pasa el control (Inyección de Dependencia)
+            if (fxmlFile.equals("listado-view.fxml")) {
                 ListadoViewController controller = loader.getController();
                 controller.init(dataController);
-            } else if (fxmlPath.endsWith("formulario-view.fxml")) {
+            } else if (fxmlFile.equals("formulario-view.fxml")) {
                 FormularioViewController controller = loader.getController();
                 controller.initData(dataController, this, usuario);
             }
@@ -77,8 +75,8 @@ public class MainViewController {
 
         } catch (IOException e) {
             e.printStackTrace();
-            dataController.showAlert(javafx.scene.control.Alert.AlertType.ERROR,
-                    "Error", "No se pudo cargar la vista: " + fxmlPath);
+            dataController.showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Error", "No se pudo cargar la vista: " + fxmlFile);
         }
     }
 }
+

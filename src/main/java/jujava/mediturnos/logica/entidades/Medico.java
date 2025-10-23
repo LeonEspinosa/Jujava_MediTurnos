@@ -2,6 +2,7 @@ package jujava.mediturnos.logica.entidades;
 
 import jujava.mediturnos.datos.AccesoDatos;
 
+// ERROR 42: Asegúrate que extienda de Persona
 public class Medico extends Persona {
     String matricula;
     String especialidad;
@@ -30,24 +31,7 @@ public class Medico extends Persona {
                 ", telefono=" + getTelefono() + ", matricula=" + matricula +
                 ", especialidad=" + especialidad + "]";
     }
-    public void registrarMedico(Medico m){
-        if(gestor != null && gestor.validarDNIUnico(String.valueOf(m.getDni()))){
-            gestor.medicos.add(m);
-            AccesoDatos.guardarMedicos(gestor.getMedicos());
-        }
-    }
-    public void modificarMedico(int DNI, String nombre, String apellido, int telefono, String matricula, String especialidad){
-        if(gestor != null) {
-            Persona persona = gestor.buscarMedicoPorDNI(DNI);
-            if (persona instanceof Medico medico) {
-                medico.setNombre(nombre);
-                medico.setApellido(apellido);
-                medico.setTelefono(telefono);
-                medico.setMatricula(matricula);
-                medico.setEspecialidad(especialidad);
-                AccesoDatos.guardarMedicos(gestor.getMedicos());
-            }
-        }
-    }
+
+    // ERROR 43: Se elimina toda la lógica de negocio de la entidad.
 }
 

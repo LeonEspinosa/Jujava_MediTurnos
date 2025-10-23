@@ -1,4 +1,5 @@
-module com.example.myjavafx {
+// ERROR 25: El módulo y los paquetes estaban incorrectos.
+module jujava.mediturnos {
     requires javafx.controls;
     requires javafx.fxml;
 
@@ -7,24 +8,20 @@ module com.example.myjavafx {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
 
-    // Abrir la raíz para el Launcher
-    opens jujava.mediturnos to javafx.fxml;
-    exports jujava.mediturnos;
-
-    // Abrir Controladores (para que FXML los encuentre)
+    // 🔹 Abre los paquetes de presentación para que JavaFX (via FXML) pueda acceder a ellos.
+    opens jujava.mediturnos.presentacion.vista to javafx.fxml;
     opens jujava.mediturnos.presentacion.controladores to javafx.fxml;
-    exports jujava.mediturnos.presentacion.controladores;
-
-    // Abrir Modelos de Vista (para JavaFX Property binding)
+    // 🔹 Abre el paquete de modelos para 'binding' de propiedades en la TableView.
     opens jujava.mediturnos.presentacion.modelos to javafx.base;
+
+    // 🔹 Exporta los paquetes que otros módulos (si los hubiera) podrían usar.
+    exports jujava.mediturnos;
+    exports jujava.mediturnos.presentacion.vista;
+    exports jujava.mediturnos.presentacion.controladores;
     exports jujava.mediturnos.presentacion.modelos;
 
-    // Abrir Vistas
-    opens jujava.mediturnos.presentacion.vista to javafx.fxml;
-    exports jujava.mediturnos.presentacion.vista;
-
-    // Exportar lógica y datos
+    // 🔹 Exporta los paquetes de lógica y datos para que la capa de presentación pueda usarlos
     exports jujava.mediturnos.logica;
-    exports jujava.mediturnos.logica.entidades;
     exports jujava.mediturnos.datos;
 }
+

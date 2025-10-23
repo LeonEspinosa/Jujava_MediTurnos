@@ -1,20 +1,21 @@
 package jujava.mediturnos.datos;
 
-import java.io.*;
-import java.util.*;
-import jujava.mediturnos.logica.entidades.Paciente;
-import jujava.mediturnos.logica.entidades.Persona;
-import jujava.mediturnos.logica.entidades.Medico;
 import jujava.mediturnos.logica.entidades.Administrador;
+import jujava.mediturnos.logica.entidades.Medico;
+import jujava.mediturnos.logica.entidades.Paciente;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AccesoDatos {
-    public static final String rutaPacientes = "archivos/pacientes.csv";
-    public static final String rutaMedicos = "archivos/medicos.csv";
-    public static final String rutaAdministrativos = "archivos/administrativos.csv";
+    private static final String rutaPacientes = "archivos/pacientes.csv";
+    private static final String rutaMedicos = "archivos/medicos.csv";
+    private static final String rutaAdministrativos = "archivos/administrativos.csv";
     /**
      * Verifica si el directorio padre de la ruta del archivo existe y lo crea si no.
      */
-    public static void asegurarDirectorio(String rutaArchivo) {
+    private static void asegurarDirectorio(String rutaArchivo) {
         File archivo = new File(rutaArchivo);
         File directorio = archivo.getParentFile();
         // Solo procede si la ruta tiene un directorio padre y este no existe
@@ -174,4 +175,3 @@ public class AccesoDatos {
         return lista;
     }
 }
-
