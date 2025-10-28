@@ -338,7 +338,7 @@ public class MainController {
 
         Optional<ButtonType> result = showConfirmation("¿Seguro que desea eliminar al usuario con DNI " + dniAEliminarStr + "?");
 
-        if (result.isPresent() && result.get() == ButtonType.YES) {
+        if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
                 // 1. Llamar a la capa de Lógica para eliminar y persistir
                 gestorUsuario.eliminarUsuario(dniAEliminarInt); // GestorUsuario ahora maneja la persistencia y errores internos
