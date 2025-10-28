@@ -7,6 +7,7 @@ module jujava.mediturnos {
     requires com.dlsc.formsfx;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
+    requires jbcrypt;
 
     // 🔹 Abre los paquetes de presentación para que JavaFX (via FXML) pueda acceder a ellos.
     opens jujava.mediturnos.presentacion.vista to javafx.fxml;

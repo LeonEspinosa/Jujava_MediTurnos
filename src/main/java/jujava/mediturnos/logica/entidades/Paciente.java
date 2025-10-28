@@ -1,13 +1,12 @@
 package jujava.mediturnos.logica.entidades;
 
-// NOTA: Se corrigió una '}' extra mal ubicada en el constructor.
-public class Paciente extends Persona { // Extiende de Usuario, no de Persona
+public class Paciente extends Persona {
     private String obraSocial;
 
-    public Paciente( String nombre, String apellido, int dni, char genero, int telefono,String obraSocial ) {
-        super(nombre, apellido, dni, genero, telefono);
+    public Paciente( String nombre, String apellido, int dni, char genero, int telefono,String passwordHash, String obraSocial) {
+        super(nombre, apellido, dni, genero, telefono, passwordHash);
         this.obraSocial = obraSocial;
-    } // La llave estaba aquí incorrectamente
+    }
 
     public String getObraSocial() {
         return obraSocial;

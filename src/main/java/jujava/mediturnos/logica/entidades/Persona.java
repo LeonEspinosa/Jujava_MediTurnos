@@ -1,5 +1,4 @@
 package jujava.mediturnos.logica.entidades;
-
 import jujava.mediturnos.datos.AccesoDatos;
 
 public class Persona {
@@ -8,17 +7,19 @@ public class Persona {
     String apellido;
     char genero;
     int telefono;
+    String passwordHash;
 
     public Persona() {}
-    public Persona(String nombre, String apellido, int dni, char genero, int telefono) {
+    public Persona(String nombre, String apellido, int dni, char genero, int telefono, String passwordHash) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;
         this.genero = genero;
         this.telefono = telefono;
+        this.passwordHash= passwordHash;
     }
 
-    // --- Getters y Setters (Correctos) ---
+    // --- Getters y Setters ---
     public int getDni() {
         return dni;
     }
@@ -49,8 +50,13 @@ public class Persona {
     public void setTelefono(int telefono) {
         this.telefono = telefono;
     }
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
 
-    // ERROR 41: Toda la lógica de negocio (como registrar/modificar)
-    // se elimina de la entidad. Esto ahora vivirá en GestorUsuario.
+
 }
 

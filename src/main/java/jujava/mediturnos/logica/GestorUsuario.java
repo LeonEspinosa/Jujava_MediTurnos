@@ -7,26 +7,31 @@ import jujava.mediturnos.logica.entidades.Administrador;
 import jujava.mediturnos.logica.entidades.Paciente;
 import java.util.ArrayList;
 import java.util.List;
+import org.mindrot.jbcrypt.BCrypt;
 
-/**
- * Esta clase es el CORAZÓN de la capa de Lógica.
- * Es la única que interactúa con AccesoDatos y contiene TODA la lógica de negocio.
- */
+
 public class GestorUsuario {
     public List<Paciente> pacientes;
     public List<Medico> medicos;
     public List<Administrador> administradores;
 
     public GestorUsuario() {
-        // Esto ahora se ejecuta UNA SOLA VEZ, porque el bucle está roto.
         this.pacientes = AccesoDatos.cargarPacientes();
         this.medicos = AccesoDatos.cargarMedicos();
         this.administradores = AccesoDatos.cargarAdministradores();
     }
 
-    public List<Paciente> getPacientes() { return pacientes; }
-    public List<Medico> getMedicos() { return medicos; }
-    public List<Administrador> getAdministradores() { return administradores; }
+    public List<Paciente> getPacientes() {
+        return pacientes;
+    }
+
+    public List<Medico> getMedicos() {
+        return medicos;
+    }
+
+    public List<Administrador> getAdministradores() {
+        return administradores;
+    }
 
     public boolean validarDNIUnico(String dniStr) {
         if (dniStr == null || dniStr.trim().isEmpty()) {
@@ -63,7 +68,7 @@ public class GestorUsuario {
         return null;
     }
 
-    public void eliminarUsuario(int DNI){
+    public void eliminarUsuario(int DNI) {
         Persona usuario = buscarUsuarioPorDNI(DNI);
         if (usuario != null) {
             if (usuario instanceof Paciente) {
@@ -80,32 +85,44 @@ public class GestorUsuario {
     }
 
     // --- MÉTODOS DE ALTA (REGISTRO) ---
-    public void agregarPaciente(Paciente p){
-        if(validarDNIUnico(String.valueOf(p.getDni()))){
+
+    public void agregarPaciente(Paciente p, String passwordIngresada) { //string password q agregue
+        if (validarDNIUnico(String.valueOf(p.getDni()))) {
+            String passwordPlana = passwordIngresada; //linea q agregue
+            String hashGuardado = BCrypt.hashpw(passwordPlana, BCrypt.gensalt());//linea q agregue
+            p.setPasswordHash(hashGuardado); //linea q agregue CONSULTARR
             pacientes.add(p);
             AccesoDatos.guardarPacientes(pacientes);
         } else System.out.println("DNI ya existente.");
     }
 
-    public void agregarMedico(Medico m){
+
+
+    public void agregarMedico(Medico m, String password){
         if(validarDNIUnico(String.valueOf(m.getDni()))){
+            String hash = BCrypt.hashpw(password, BCrypt.gensalt());
+            m.setPasswordHash(hash);
             medicos.add(m);
             AccesoDatos.guardarMedicos(medicos);
-        } else System.out.println("DNI ya existente.");
+        } else {
+            System.out.println("DNI ya existente.");
+        }
     }
 
-    public void agregarAdministrador(Administrador a){
+
+
+    public void agregarAdministrador(Administrador a, String password){
         if(validarDNIUnico(String.valueOf(a.getDni()))){
+            String hash = BCrypt.hashpw(password, BCrypt.gensalt());
+            a.setPasswordHash(hash);
             administradores.add(a);
             AccesoDatos.guardarAdministradores(administradores);
-        } else System.out.println("DNI ya existente.");
+        } else {
+            System.out.println("DNI ya existente.");
+        }
     }
 
-    // --- MÉTODOS DE MODIFICACIÓN (NUEVOS, movidos desde las entidades) ---
 
-    /**
-     * Lógica de negocio para modificar un Paciente.
-     */
     public void modificarPaciente(int DNI, String nombre, String apellido, char genero, int telefono, String obraSocial) {
         Paciente paciente = buscarPacientePorDNI(DNI);
         if (paciente != null) {
@@ -118,10 +135,7 @@ public class GestorUsuario {
         }
     }
 
-    /**
-     * Lógica de negocio para modificar un Médico.
-     */
-    public void modificarMedico(int DNI, String nombre, String apellido, char genero, int telefono, String matricula, String especialidad){
+    public void modificarMedico(int DNI, String nombre, String apellido, char genero, int telefono, String matricula, String especialidad) {
         Medico medico = buscarMedicoPorDNI(DNI);
         if (medico != null) {
             medico.setNombre(nombre);
@@ -129,17 +143,15 @@ public class GestorUsuario {
             medico.setGenero(genero);
             medico.setTelefono(telefono);
             medico.setMatricula(matricula);
-            medico.setEspecialidad(especialidad); // Considerar añadir especialidad al formulario
+            medico.setEspecialidad(especialidad);
             AccesoDatos.guardarMedicos(medicos);
         }
     }
 
-    /**
-     * Lógica de negocio para modificar un Administrador.
-     */
-    public void modificarAdministrador(int DNI, String nombre, String apellido, char genero, int telefono, String area){
+
+    public void modificarAdministrador(int DNI, String nombre, String apellido, char genero, int telefono, String area) {
         Persona usuario = buscarUsuarioPorDNI(DNI);
-        if(usuario instanceof Administrador administrador){
+        if (usuario instanceof Administrador administrador) {
             administrador.setNombre(nombre);
             administrador.setApellido(apellido);
             administrador.setGenero(genero);
@@ -147,6 +159,20 @@ public class GestorUsuario {
             administrador.setArea(area);
             AccesoDatos.guardarAdministradores(administradores);
         }
+    }
+
+    public Persona autenticarUsuario(int dni, String passwordIngresada) {
+        Persona usuario = this.buscarUsuarioPorDNI(dni);
+        if (usuario == null) {
+            return null;
+        }
+        String hashGuardado = usuario.getPasswordHash();
+        if (BCrypt.checkpw(passwordIngresada, hashGuardado)) {
+            return usuario;
+        } else {
+            return null;
+        }
+
     }
 }
 

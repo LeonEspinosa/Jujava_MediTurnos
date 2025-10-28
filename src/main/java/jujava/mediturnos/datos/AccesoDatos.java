@@ -12,13 +12,11 @@ public class AccesoDatos {
     private static final String rutaPacientes = "archivos/pacientes.csv";
     private static final String rutaMedicos = "archivos/medicos.csv";
     private static final String rutaAdministrativos = "archivos/administrativos.csv";
-    /**
-     * Verifica si el directorio padre de la ruta del archivo existe y lo crea si no.
-     */
+
     private static void asegurarDirectorio(String rutaArchivo) {
         File archivo = new File(rutaArchivo);
         File directorio = archivo.getParentFile();
-        // Solo procede si la ruta tiene un directorio padre y este no existe
+
         if (directorio != null && !directorio.exists()) {
             if (directorio.mkdirs()) { // .mkdirs() crea todos los directorios necesarios
                 System.out.println(" Directorio de archivos creado: " + directorio.getAbsolutePath());
@@ -31,14 +29,15 @@ public class AccesoDatos {
     public static void guardarPacientes(List<Paciente> listaPacientes) {
         asegurarDirectorio(rutaPacientes); // <-- Llamada al método de aseguramiento
         try (PrintWriter pw = new PrintWriter(new FileWriter(rutaPacientes))) {
-            pw.println("nombre,apellido,dni,genero,telefono,obraSocial");
+            pw.println("nombre,apellido,dni,genero,telefono,obraSocial,PasswordHash");
             for (Paciente p : listaPacientes) {
                 pw.println(p.getNombre() + "," +
                         p.getApellido() + "," +
                         p.getDni() + "," +
                         p.getGenero() + "," +
                         p.getTelefono() + "," +
-                        p.getObraSocial());
+                        p.getObraSocial()+","+
+                        p.getPasswordHash());
             }
             System.out.println("Pacientes guardados correctamente.");
         } catch (IOException e) {
@@ -58,14 +57,15 @@ public class AccesoDatos {
             while ((linea = br.readLine()) != null) {
                 if (primera) { primera = false; continue; } // salto encabezado
                 String[] datos = linea.split(",");
-                if (datos.length == 6) {
+                if (datos.length == 7) {
                     String nombre = datos[0];
                     String apellido = datos[1];
                     int dni = Integer.parseInt(datos[2].trim());
                     char genero = datos[3].trim().charAt(0);
                     int telefono = Integer.parseInt(datos[4].trim());
                     String obraSocial = datos[5];
-                    lista.add(new Paciente(nombre, apellido, dni, genero, telefono, obraSocial));
+                    String passwordHash = datos[6];
+                    lista.add(new Paciente(nombre, apellido, dni, genero, telefono, obraSocial,passwordHash));
                 }
             }
             System.out.println("Pacientes cargados correctamente.");
@@ -78,7 +78,7 @@ public class AccesoDatos {
     public static void guardarMedicos(List<Medico> listaMedicos) {
         asegurarDirectorio(rutaMedicos); // <-- Llamada al método de aseguramiento
         try (PrintWriter pw = new PrintWriter(new FileWriter(rutaMedicos))) {
-            pw.println("nombre,apellido,dni,genero,telefono,matricula,especialidad");
+            pw.println("nombre,apellido,dni,genero,telefono,matricula,especialidad,passwordHash");
             for (Medico m : listaMedicos) {
 
                 pw.println(m.getNombre() + "," +
@@ -87,7 +87,8 @@ public class AccesoDatos {
                         m.getGenero() + "," +
                         m.getTelefono() + "," +
                         m.getMatricula() + "," +
-                        m.getEspecialidad());
+                        m.getEspecialidad()+ "," +
+                        m.getPasswordHash());
             }
             System.out.println("Médicos guardados correctamente.");
         } catch (IOException e) {
@@ -107,7 +108,7 @@ public class AccesoDatos {
             while ((linea = br.readLine()) != null) {
                 if (primera) { primera = false; continue; } // salto encabezado
                 String[] datos = linea.split(",");
-                if (datos.length == 7) {
+                if (datos.length == 8) {
                     String nombre = datos[0];
                     String apellido = datos[1];
                     int dni = Integer.parseInt(datos[2].trim());
@@ -115,7 +116,8 @@ public class AccesoDatos {
                     int telefono = Integer.parseInt(datos[4].trim());
                     String matricula = datos[5];
                     String especialidad = datos[6];
-                    lista.add(new Medico(nombre, apellido, dni, genero, telefono, matricula, especialidad));
+                    String passwordHash = datos[7];
+                    lista.add(new Medico(nombre, apellido,dni, genero, telefono, matricula, especialidad,passwordHash));
                 } else {
                     // Mensaje de advertencia si la línea tiene formato incorrecto
                     System.err.println("Advertencia: Línea de médico inválida (campos incorrectos): " + linea);
@@ -131,14 +133,15 @@ public class AccesoDatos {
     public static void guardarAdministradores(List<Administrador> listaAdministradores) {
         asegurarDirectorio(rutaAdministrativos); // <-- Llamada al método de aseguramiento
         try (PrintWriter pw = new PrintWriter(new FileWriter(rutaAdministrativos))) {
-            pw.println("nombre,apellido,dni,genero,telefono,area");
+            pw.println("nombre,apellido,dni,genero,telefono,area,passwordHash");
             for (Administrador a : listaAdministradores) {
                 pw.println(a.getNombre() + "," +
                         a.getApellido() + "," +
                         a.getDni() + "," +
                         a.getGenero() + "," +
                         a.getTelefono() + "," +
-                        a.getArea());
+                        a.getArea()+","+
+                        a.getPasswordHash());
             }
             System.out.println("Administradores guardados correctamente.");
         } catch (IOException e) {
@@ -158,14 +161,15 @@ public class AccesoDatos {
             while ((linea = br.readLine()) != null) {
                 if (primera) { primera = false; continue; }
                 String[] datos = linea.split(",");
-                if (datos.length == 6) {
+                if (datos.length == 7) {
                     String nombre = datos[0];
                     String apellido = datos[1];
                     int dni = Integer.parseInt(datos[2].trim());
                     char genero = datos[3].trim().charAt(0);
                     int telefono = Integer.parseInt(datos[4].trim());
                     String area = datos[5];
-                    lista.add(new Administrador(nombre, apellido, dni, genero, telefono, area));
+                    String passwordHash = datos[6];
+                    lista.add(new Administrador(nombre, apellido,dni, genero, telefono, area,passwordHash));
                 }
             }
             System.out.println("Administradores cargados correctamente.");
@@ -175,3 +179,8 @@ public class AccesoDatos {
         return lista;
     }
 }
+
+
+
+
+
