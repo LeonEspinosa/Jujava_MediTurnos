@@ -21,7 +21,7 @@ public class MainViewController {
 
     @FXML
     private void initialize() {
-        // AHORA SÍ: Esto crea el MainController, que a su vez cargará GestorUsuario.
+
         this.dataController = new MainController();
         // Carga la vista de listado por defecto
         handleListar();
@@ -57,7 +57,6 @@ public class MainViewController {
     private void loadView(String fxmlFile, Usuario usuario) {
         try {
             FXMLLoader loader = new FXMLLoader();
-            // ERROR 33: Ruta de recursos corregida
             loader.setLocation(AppMain.class.getResource("/jujava/mediturnos/" + fxmlFile));
 
             Node view = loader.load();

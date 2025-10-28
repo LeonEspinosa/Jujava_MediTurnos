@@ -8,10 +8,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
-/**
- * Controlador para listado-view.fxml.
- * Maneja la lógica específica de la vista de listado.
- */
+
 public class ListadoViewController {
 
     // 1. Inyección de Componentes (deben coincidir con fx:id)

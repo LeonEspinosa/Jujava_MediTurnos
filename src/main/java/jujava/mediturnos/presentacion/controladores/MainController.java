@@ -1,14 +1,13 @@
 package jujava.mediturnos.presentacion.controladores;
 
-// 1. IMPORTAMOS LAS CLASES DE LÓGICA Y MODELOS DE PRESENTACIÓN
 import jujava.mediturnos.logica.*;
 import jujava.mediturnos.logica.entidades.Persona;
 import jujava.mediturnos.logica.entidades.Medico;
 import jujava.mediturnos.logica.entidades.Administrador;
 import jujava.mediturnos.logica.entidades.Paciente;
 
-import jujava.mediturnos.presentacion.modelos.Usuario; // El DTO de presentación
-import jujava.mediturnos.datos.AccesoDatos; // Importación necesaria para guardar
+import jujava.mediturnos.presentacion.modelos.Usuario;
+import jujava.mediturnos.datos.AccesoDatos;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,10 +17,6 @@ import javafx.scene.control.ButtonType;
 
 import java.util.Optional;
 
-/**
- * Controlador Lógico (Capa de Presentación) - EL PUENTE.
- * (Versión corregida sin lógica de negocio duplicada)
- */
 public class MainController {
 
     private final GestorUsuario gestorUsuario;
@@ -36,10 +31,7 @@ public class MainController {
         this.filteredData = new FilteredList<>(masterData, p -> true);
     }
 
-    /**
-     * Carga todos los usuarios de la capa de lógica (CSV) y los
-     * convierte en DTOs de 'Usuario' (presentación) para la TableView.
-     */
+
     private void cargarDatosDeLogica() {
         masterData.clear();
         for (Paciente p : gestorUsuario.getPacientes()) {
@@ -53,10 +45,6 @@ public class MainController {
         }
     }
 
-    /**
-     * Mapeador (Helper).
-     * Convierte un objeto de Lógica (Persona) en un DTO de Presentación (Usuario).
-     */
     private Usuario logicaAPresentacion(Persona p) {
         String rol = "";
         String infoExtra = "";

@@ -10,10 +10,7 @@ import javafx.scene.layout.VBox;
 
 import java.util.Arrays;
 
-/**
- * Controlador para formulario-view.fxml.
- * Maneja la lógica de Alta y Modificación.
- */
+
 public class FormularioViewController {
 
     @FXML
@@ -43,9 +40,7 @@ public class FormularioViewController {
     private Usuario usuarioActual; // DTO de presentación
     private boolean esModificacion;
 
-    /**
-     * Llamado automáticamente después de cargar el FXML.
-     */
+
     @FXML
     public void initialize() {
         // Poblar el ComboBox de Roles
@@ -55,9 +50,7 @@ public class FormularioViewController {
         cmbRol.valueProperty().addListener((obs, oldVal, newVal) -> actualizarCamposDinamicos(newVal));
     }
 
-    /**
-     * Método de inicialización manual para pasar datos.
-     */
+
     public void initData(MainController dataController, MainViewController navigationController, Usuario usuario) {
         this.dataController = dataController;
         this.navigationController = navigationController;
@@ -75,9 +68,7 @@ public class FormularioViewController {
         }
     }
 
-    /**
-     * Muestra u oculta campos según el Rol.
-     */
+
     private void actualizarCamposDinamicos(String rol) {
         if (rol == null) {
             vbDatosEspecificos.setVisible(false);

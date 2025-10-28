@@ -3,10 +3,7 @@ package jujava.mediturnos.presentacion.modelos;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-/**
- * Clase Modelo (DTO) que representa al Usuario.
- * Contiene las propiedades de JavaFX para el bindeo en la TableView.
- */
+
 public class Usuario {
 
     private final StringProperty dni;
@@ -43,4 +40,3 @@ public class Usuario {
     public void setRol(String rol) { this.rol.set(rol); }
     public void setInfoExtra(String infoExtra) { this.infoExtra.set(infoExtra); }
 }
-
