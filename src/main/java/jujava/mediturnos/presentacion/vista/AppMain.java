@@ -20,6 +20,8 @@ public class AppMain extends Application {
         try {
             // 1. Cargar el FXML de la ventana principal
             FXMLLoader loader = new FXMLLoader();
+            mainViewController = loader.getController();
+            mainViewController.setPrimaryStage(this.primaryStage);
 
             // ERROR 26: La ruta a los recursos FXML estaba incorrecta.
             // Debe apuntar a la raíz de 'resources' y luego al paquete.
