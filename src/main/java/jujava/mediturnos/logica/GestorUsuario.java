@@ -102,10 +102,13 @@ public class GestorUsuario {
             if (usuario instanceof Paciente) {
                 pacientes.remove(usuario);
                 AccesoDatos.guardarPacientes(pacientes);
+
             } else if (usuario instanceof Medico) {
                 medicos.remove(usuario);
                 AccesoDatos.guardarMedicos(medicos);
+
             } else if (usuario instanceof Administrador) {
+                // (Excluyendo DNI 0, que se maneja en MainController)
                 administradores.remove(usuario);
                 AccesoDatos.guardarAdministradores(administradores);
             }
