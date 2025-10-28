@@ -1,4 +1,2 @@
-nombre,apellido,dni,genero,telefono,matricula,especialidad
-Medico,ApellidoMedico,146468796,M,64684897,196,Especialidad_Default
-Nombre,Espinosa,410651468,F,38845645,1234,Especialidad_Default
-asdasfsa,asdasdsa,468979,F,156,987,Especialidad_Default
+nombre,apellido,dni,genero,telefono,matricula,especialidad,passwordHash
+Medico,Medicop,321,M,1234,1234,Especialidad_Default,$2a$10$xMnkksQzLJP6GUGsitOthuhNT0X5V0H8/bbF1ODedI/v7H0ceOj4O

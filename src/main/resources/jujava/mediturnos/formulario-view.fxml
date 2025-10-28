@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -16,51 +17,57 @@
   Vista de Formulario (Alta y Modificación)
   Controlador: jujava.mediturnos.presentacion.controladores.FormularioViewController
 -->
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="15.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jujava.mediturnos.presentacion.controladores.FormularioViewController">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jujava.mediturnos.presentacion.controladores.FormularioViewController">
     <children>
         <Label fx:id="lblTitulo" styleClass="view-title" text="Formulario de Alta (Registro)">
         </Label>
         <!-- Formulario de Campos -->
         <GridPane hgap="10.0" vgap="10.0">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="10.0" prefWidth="120.0" /> <!-- Columna etiquetas un poco más ancha -->
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <!-- Nuevas filas para Género y Teléfono -->
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <!-- Fila para el VBox dinámico -->
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- Rol -->
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- DNI -->
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- Nombre -->
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- Apellido -->
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- Género -->
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- Teléfono -->
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- Contraseña (Fila 6) -->
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- Confirmar Contraseña (Fila 7) -->
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" /> <!-- Info Específica (Fila 8) -->
             </rowConstraints>
             <children>
                 <Label text="Rol:" GridPane.halignment="RIGHT" />
                 <Label text="DNI:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
                 <Label text="Nombre:" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
                 <Label text="Apellido:" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
-                <!-- Campos nuevos -->
                 <Label text="Género (M/F):" GridPane.halignment="RIGHT" GridPane.rowIndex="4" />
                 <Label text="Teléfono:" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
+                <Label fx:id="lblPassword" text="Nueva Contraseña:" GridPane.halignment="RIGHT" GridPane.rowIndex="6" />
+                <Label fx:id="lblConfirmarPassword" text="Confirmar Contraseña:" GridPane.halignment="RIGHT" GridPane.rowIndex="7" />
+                <!-- Layout Corregido: Label Info Específica en Col 0 -->
+                <Label fx:id="lblInfoExtra" text="Información Específica:" GridPane.halignment="RIGHT" GridPane.rowIndex="8">
+                    <managed>false</managed>
+                    <visible>false</visible>
+                </Label>
+
 
                 <ComboBox fx:id="cmbRol" maxWidth="1.7976931348623157E308" promptText="Seleccione Rol" GridPane.columnIndex="1" />
                 <TextField fx:id="txtDni" promptText="DNI (solo números)" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 <TextField fx:id="txtNombre" promptText="Nombre" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <TextField fx:id="txtApellido" promptText="Apellido" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <!-- Campos nuevos -->
                 <TextField fx:id="txtGenero" promptText="M o F" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                 <TextField fx:id="txtTelefono" promptText="Teléfono (solo números)" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <PasswordField fx:id="txtPassword" promptText="Nueva Contraseña (dejar vacío para no cambiar)" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                <PasswordField fx:id="txtConfirmarPassword" promptText="Repita la nueva contraseña" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                <!-- Layout Corregido: TextField Info Específica en Col 1 -->
+                <TextField fx:id="txtInfoExtra" promptText="Dato específico del rol" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                    <managed>false</managed>
+                    <visible>false</visible>
+                </TextField>
 
-                <!-- VBox para Campos Dinámicos -->
-                <VBox fx:id="vbDatosEspecificos" spacing="5.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="6" VBox.vgrow="ALWAYS">
-                    <children>
-                        <Label fx:id="lblInfoExtra" text="Información Específica:" />
-                        <TextField fx:id="txtInfoExtra" promptText="Dato específico del rol" />
-                    </children>
-                </VBox>
             </children>
         </GridPane>
         <VBox VBox.vgrow="ALWAYS" />
@@ -76,4 +83,3 @@
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 </VBox>
-

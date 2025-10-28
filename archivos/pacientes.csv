@@ -1,2 +1,3 @@
-nombre,apellido,dni,genero,telefono,obraSocial
-Franco,Espinosa,456465146,M,38888,asdasd
+nombre,apellido,dni,genero,telefono,obraSocial,PasswordHash
+fasfsafasda,asdasfasfd,7425727,F,427272,$2a$10$vDupkowLtgbyQmLZuZcEWeNqbd5zAJVD1dF7wb5SMxK.BgqtmU4PW,jujuy
+Franco,Espinosa,1568496,M,1231241,osde,$2a$10$Hhb6RIAgJ/tER5B/xswFR.jVLD9pptonsLzrmgUYTN9BXHbj62VU2

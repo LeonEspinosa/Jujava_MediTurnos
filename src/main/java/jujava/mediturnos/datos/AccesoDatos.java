@@ -161,16 +161,18 @@ public class AccesoDatos {
             while ((linea = br.readLine()) != null) {
                 if (primera) { primera = false; continue; }
                 String[] datos = linea.split(",");
-                if (datos.length == 7) {
+                if (datos.length == 7) { // Correcto, son 7 columnas ahora
                     String nombre = datos[0];
                     String apellido = datos[1];
                     int dni = Integer.parseInt(datos[2].trim());
                     char genero = datos[3].trim().charAt(0);
                     int telefono = Integer.parseInt(datos[4].trim());
                     String area = datos[5];
-                    String passwordHash = datos[6];
-                    lista.add(new Administrador(nombre, apellido,dni, genero, telefono, area,passwordHash));
+                    String passwordHash = datos[6]; // Esta es la columna del hash
+                    // Asegúrate que el constructor llamado aquí coincida exactamente con los parámetros
+                    lista.add(new Administrador(nombre, apellido, dni, genero, telefono, passwordHash, area)); // Parece correcto
                 }
+
             }
             System.out.println("Administradores cargados correctamente.");
         } catch (IOException | NumberFormatException e) {

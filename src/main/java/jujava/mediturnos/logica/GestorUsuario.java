@@ -14,11 +14,39 @@ public class GestorUsuario {
     public List<Paciente> pacientes;
     public List<Medico> medicos;
     public List<Administrador> administradores;
+    private static final int DEFAULT_ADMIN_DNI = 0;
+    //public static final String DEFAULT_ADMIN_PASS = "admin";
 
     public GestorUsuario() {
         this.pacientes = AccesoDatos.cargarPacientes();
         this.medicos = AccesoDatos.cargarMedicos();
         this.administradores = AccesoDatos.cargarAdministradores();
+        crearAdminPorDefectoSiNoExiste();
+    }
+
+    private void crearAdminPorDefectoSiNoExiste() {
+        Persona adminExistente = buscarUsuarioPorDNI(DEFAULT_ADMIN_DNI);
+
+
+        if (adminExistente == null || !(adminExistente instanceof Administrador)) {
+            System.out.println("Administrador por defecto (DNI: " + DEFAULT_ADMIN_DNI + ") no encontrado. Creando...");
+
+            String nombre = "Admin";
+            String apellido = "Default";
+            char genero = 'M'; // O 'F' o 'X' si prefieres
+            int telefono = 12345678; // Teléfono de ejemplo
+            String area = "Sistemas"; // Área de ejemplo
+            String contraseña = "1234";
+
+            String passwordHash = BCrypt.hashpw(contraseña, BCrypt.gensalt());
+            Administrador adminPorDefecto = new Administrador(nombre, apellido, DEFAULT_ADMIN_DNI, genero, telefono, passwordHash, area);
+            this.administradores.add(adminPorDefecto);
+            AccesoDatos.guardarAdministradores(this.administradores);
+
+            System.out.println("Administrador por defecto creado y guardado.");
+        } else {
+            System.out.println("Administrador por defecto (DNI: " + DEFAULT_ADMIN_DNI + ") ya existe.");
+        }
     }
 
     public List<Paciente> getPacientes() {
@@ -173,6 +201,56 @@ public class GestorUsuario {
             return null;
         }
 
+    }
+
+    public boolean modificarPasswordUsuario(int DNI, String nuevaPassword) {
+        if (nuevaPassword == null || nuevaPassword.trim().isEmpty()) {
+            System.err.println("Error modificar contraseña: La nueva contraseña no puede estar vacía.");
+            return false;
+        }
+        if (DNI == DEFAULT_ADMIN_DNI && nuevaPassword.length() < 4) { // Ejemplo: Requerir longitud mínima para admin
+            System.err.println("Error modificar contraseña: La contraseña del admin por defecto debe tener al menos 4 caracteres.");
+            return false;
+        }
+
+        Persona usuario = buscarUsuarioPorDNI(DNI);
+        if (usuario == null) {
+            System.err.println("Error modificar contraseña: Usuario con DNI " + DNI + " no encontrado.");
+            return false;
+        }
+
+        try {
+            // Generar el nuevo hash
+            String nuevoHash = BCrypt.hashpw(nuevaPassword.trim(), BCrypt.gensalt());
+            // Actualizar el hash en el objeto Persona
+            usuario.setPasswordHash(nuevoHash);
+
+            // Guardar en el archivo CSV correspondiente
+            boolean guardado = false;
+            if (usuario instanceof Paciente) {
+                AccesoDatos.guardarPacientes(pacientes);
+                guardado = true;
+            } else if (usuario instanceof Medico) {
+                AccesoDatos.guardarMedicos(medicos);
+                guardado = true;
+            } else if (usuario instanceof Administrador) {
+                AccesoDatos.guardarAdministradores(administradores);
+                guardado = true;
+            }
+
+            if(guardado) {
+                System.out.println("Contraseña actualizada para DNI: " + DNI);
+                return true;
+            } else {
+                System.err.println("Error modificar contraseña: No se pudo determinar el tipo de usuario para guardar DNI: " + DNI);
+                return false;
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error al hashear o guardar la nueva contraseña para DNI " + DNI + ": " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 }
 

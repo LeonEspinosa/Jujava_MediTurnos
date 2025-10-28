@@ -8,9 +8,6 @@ public class Administrador extends Persona{
 
     String area;
 
-    // ERROR 45 (CRÍTICO): Se elimina la instancia de GestorUsuario que causaba el bucle.
-    // private GestorUsuario gestor=new GestorUsuario();
-
     public Administrador() {}
 
     public Administrador(String nombre, String apellido, int dni, char genero, int telefono,String passwordHash, String area ) {
