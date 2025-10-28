@@ -30,12 +30,12 @@ public class GestorUsuario {
 
         if (adminExistente == null || !(adminExistente instanceof Administrador)) {
             System.out.println("Administrador por defecto (DNI: " + DEFAULT_ADMIN_DNI + ") no encontrado. Creando...");
-
+            //Datos de Ejemplo
             String nombre = "Admin";
             String apellido = "Default";
-            char genero = 'M'; // O 'F' o 'X' si prefieres
-            int telefono = 12345678; // Teléfono de ejemplo
-            String area = "Sistemas"; // Área de ejemplo
+            char genero = 'M';
+            int telefono = 12345678;
+            String area = "Sistemas";
             String contraseña = "1234";
 
             String passwordHash = BCrypt.hashpw(contraseña, BCrypt.gensalt());
@@ -225,7 +225,7 @@ public class GestorUsuario {
             // Actualizar el hash en el objeto Persona
             usuario.setPasswordHash(nuevoHash);
 
-            // Guardar en el archivo CSV correspondiente
+            // Guardar en el archivo CSV
             boolean guardado = false;
             if (usuario instanceof Paciente) {
                 AccesoDatos.guardarPacientes(pacientes);

@@ -10,22 +10,19 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<!--
-  Vista de Listado y Búsqueda
-  Controlador: jujava.mediturnos.presentacion.controladores.ListadoViewController
--->
+
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="15.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jujava.mediturnos.presentacion.controladores.ListadoViewController">
     <children>
         <Label styleClass="view-title" text="Listado de Usuarios">
         </Label>
-        <!-- Área de Búsqueda -->
+
         <HBox alignment="CENTER_LEFT" spacing="10.0">
             <children>
                 <TextField fx:id="txtDni" onAction="#handleBuscar" promptText="Buscar por DNI" HBox.hgrow="ALWAYS" />
                 <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#handleBuscar" styleClass="button-primary" text="Buscar" />
             </children>
         </HBox>
-        <!-- Tabla de Usuarios -->
+
         <TableView fx:id="tblUsuarios" VBox.vgrow="ALWAYS">
             <columns>
                 <TableColumn fx:id="colDni" prefWidth="100.0" text="DNI" />
@@ -37,7 +34,7 @@
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
             </columnResizePolicy>
         </TableView>
-        <!-- Botón Eliminar (al lado de la lista) -->
+
         <HBox alignment="CENTER_RIGHT">
             <children>
                 <Button fx:id="btnEliminar" mnemonicParsing="false" onAction="#handleEliminar" styleClass="button-danger" text="Eliminar Usuario Seleccionado" />

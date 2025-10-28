@@ -29,13 +29,10 @@ public class ListadoViewController {
     @FXML
     private TableColumn<Usuario, String> colRol;
 
-    // Referencia al controlador principal (de lógica/datos)
+
     private MainController dataController;
 
-    /**
-     * Llamado automáticamente por JavaFX después de cargar el FXML.
-     * Es el lugar perfecto para configurar la vista.
-     */
+
     @FXML
     public void initialize() {
         // Configurar las columnas de la tabla
@@ -63,7 +60,7 @@ public class ListadoViewController {
         tblUsuarios.setItems(mainController.getFilteredData());
     }
 
-    // 2. Métodos de Acción (llamados desde onAction en FXML)
+    // 2. Métodos de Acción
 
     @FXML
     private void handleBuscar() {

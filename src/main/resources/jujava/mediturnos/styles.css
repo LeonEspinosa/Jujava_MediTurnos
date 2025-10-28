@@ -35,7 +35,7 @@
     -fx-padding: 8 12 8 12;
 }
 .menu-button:hover {
-    -fx-background-color: #4e6a85; /* Azul más claro al pasar el mouse */
+    -fx-background-color: #4e6a85;
 }
 .menu-button:pressed {
     -fx-background-color: #2c3e50;
@@ -59,7 +59,7 @@
 
 /* --- Estilos de Contenido (Botones, Campos) --- */
 
-/* Botón Primario (Ej. Guardar, Buscar) */
+/* Botón Primario  */
 .button-primary {
     -fx-background-color: #3498db; /* Azul */
     -fx-text-fill: white;
@@ -71,7 +71,7 @@
     -fx-background-color: #2980b9;
 }
 
-/* Botón de Peligro (Ej. Eliminar) */
+/* Botón de Peligro  */
 .button-danger {
     -fx-background-color: #e74c3c; /* Rojo */
     -fx-text-fill: white;

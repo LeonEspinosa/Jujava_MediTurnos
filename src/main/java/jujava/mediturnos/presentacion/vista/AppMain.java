@@ -30,7 +30,6 @@ public class AppMain extends Application {
             loader.setLocation(AppMain.class.getResource("/jujava/mediturnos/main-view.fxml"));
             rootLayout = (BorderPane) loader.load();
 
-            // ¡IMPORTANTE! Obtenemos la referencia al controlador principal DESPUÉS de load()
             mainViewController = loader.getController();
 
             // Inyectamos el Stage principal en el MainViewController
@@ -48,17 +47,16 @@ public class AppMain extends Application {
 
             // primaryStage.show();
 
-            // 5. En lugar de mostrar la app, mostramos el Login
             mostrarVentanaLogin();
 
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Error: No se pudo cargar 'main-view.fxml'.");
-            // Considera mostrar una alerta al usuario aquí
+
         } catch (IllegalStateException e) {
             e.printStackTrace();
             System.err.println("Error: Problema al obtener el controlador o cargar FXML. ¿Está bien configurado?");
-            // Considera mostrar una alerta al usuario aquí
+
         }
     }
 
@@ -73,15 +71,15 @@ public class AppMain extends Application {
             // Crear un nuevo Stage (ventana) para el login
             Stage loginStage = new Stage();
             loginStage.setTitle("Inicio de Sesión");
-            loginStage.initModality(Modality.APPLICATION_MODAL); // Bloquea la ventana principal
-            loginStage.initOwner(primaryStage); // El "dueño" es la ventana principal (aunque esté oculta)
-            loginStage.setResizable(false); // Evitar que el usuario redimensione la ventana de login
+            loginStage.initModality(Modality.APPLICATION_MODAL);
+            loginStage.initOwner(primaryStage);
+            loginStage.setResizable(false);
 
             Scene loginScene = new Scene(loginLayout);
 
             // Aplicar la misma hoja de estilos al login
             String css = AppMain.class.getResource("/jujava/mediturnos/styles.css").toExternalForm();
-            if (css != null) { // Verificar que el CSS exista
+            if (css != null) {
                 loginScene.getStylesheets().add(css);
             } else {
                 System.err.println("Advertencia: No se encontró 'styles.css' para el login.");
@@ -91,14 +89,14 @@ public class AppMain extends Application {
             loginStage.setScene(loginScene);
 
             // --- INYECCIÓN DE DEPENDENCIA ---
-            // Pasamos el controlador principal (oculto) y el stage de login al controlador de login
+
             LoginViewController loginController = loader.getController();
             if (loginController != null && mainViewController != null) {
                 loginController.initData(loginStage, mainViewController);
             } else {
                 System.err.println("Error: No se pudo obtener el LoginViewController o MainViewController para la inyección.");
-                // Podrías cerrar la app aquí o mostrar un error fatal
-                return; // Salir si hay error grave
+
+                return;
             }
 
             loginStage.showAndWait();
@@ -106,11 +104,11 @@ public class AppMain extends Application {
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Error: No se pudo cargar 'login-view.fxml'.");
-            // Mostrar una alerta al usuario indicando el fallo al cargar el login
+
         } catch (IllegalStateException e) {
             e.printStackTrace();
             System.err.println("Error: Problema al obtener el controlador de login. ¿Está bien configurado?");
-            // Mostrar una alerta al usuario
+
         }
     }
 

@@ -2,7 +2,6 @@ package jujava.mediturnos.logica.entidades;
 
 import jujava.mediturnos.datos.AccesoDatos;
 
-// ERROR 42: Asegúrate que extienda de Persona
 public class Medico extends Persona {
     String matricula;
     String especialidad;
@@ -32,6 +31,5 @@ public class Medico extends Persona {
                 ", especialidad=" + especialidad + "]";
     }
 
-    // ERROR 43: Se elimina toda la lógica de negocio de la entidad.
 }
 

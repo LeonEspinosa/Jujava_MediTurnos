@@ -119,18 +119,17 @@
     </dependencies>
 
     <build>
-        <!-- ¡NUEVO! ESTE BLOQUE LE DICE A MAVEN QUE INCLUYA FXML Y CSS -->
+
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>**/*.fxml</include>
                     <include>**/*.css</include>
-                    <include>**/*.png</include> <!-- Por si añadimos imágenes -->
+                    <include>**/*.png</include>
                 </includes>
             </resource>
         </resources>
-        <!-- FIN DEL BLOQUE NUEVO -->
 
         <plugins>
             <plugin>
@@ -148,10 +147,10 @@
                 <version>0.0.8</version>
                 <executions>
                     <execution>
-                        <!-- Default configuration for running with: mvn clean javafx:run -->
+
                         <id>default-cli</id>
                         <configuration>
-                            <!-- ACTUALIZADO: Apunta a su Launcher, no a HelloApplication -->
+
                             <mainClass>com.example.myjavafx/com.example.myjavafx.Launcher</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>

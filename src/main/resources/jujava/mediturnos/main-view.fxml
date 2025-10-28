@@ -8,13 +8,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<!--
-  Ventana Principal (Chrome de la App)
-  Controlador: jujava.mediturnos.presentacion.controladores.MainViewController
--->
+
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jujava.mediturnos.presentacion.controladores.MainViewController">
     <left>
-        <!-- Menú de Navegación Izquierdo -->
+
         <VBox fx:id="menuBox" prefWidth="180.0" spacing="10.0" styleClass="menu-bar" BorderPane.alignment="CENTER">
             <children>
                 <Label styleClass="menu-header" text="Gestión de Usuarios">
@@ -33,7 +30,6 @@
         </VBox>
     </left>
     <center>
-        <!-- Área de Contenido -->
         <BorderPane fx:id="contentArea" prefHeight="200.0" prefWidth="200.0">
             <bottom>
                 <Label fx:id="lblUsuarioLogueado" text="Usuario no identificado" BorderPane.alignment="CENTER_LEFT">

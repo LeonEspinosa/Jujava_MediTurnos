@@ -3,7 +3,7 @@ package jujava.mediturnos.logica.entidades;
 import jujava.mediturnos.datos.AccesoDatos;
 import jujava.mediturnos.logica.entidades.Persona;
 
-// ERROR 44: Asegúrate que extienda de Persona
+
 public class Administrador extends Persona{
 
     String area;
@@ -30,6 +30,5 @@ public class Administrador extends Persona{
                 ", area:" + getArea();
     }
 
-    // ERROR 46: Se elimina toda la lógica de negocio de la entidad.
 }
 

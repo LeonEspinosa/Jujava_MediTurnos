@@ -31,7 +31,6 @@ public class MainViewController {
     private void initialize() {
 
         this.dataController = new MainController();
-        // Carga la vista de listado por defecto
         //handleListar();
     }
 
@@ -43,10 +42,10 @@ public class MainViewController {
     public void iniciarAplicacionPrincipal(Persona usuario) {
         this.usuarioLogueado = usuario;
 
-        // 1. Mostrar la ventana principal (que estaba oculta)
+        // 1. Mostrar la ventana principal
         if (this.primaryStage != null) {
             this.primaryStage.show();
-            // Opcional: Centrarla después de mostrarla
+
             this.primaryStage.centerOnScreen();
         } else {
             System.err.println("Error: PrimaryStage no fue inyectado en MainViewController.");
@@ -59,10 +58,7 @@ public class MainViewController {
             System.err.println("Advertencia: lblUsuarioLogueado es null. ¿Olvidaste agregarlo a main-view.fxml?");
         }
 
-        // 3. (OPCIONAL) Configurar permisos según el rol
-        // ej: if (usuario instanceof Paciente) { btnRegistro.setDisable(true); }
 
-        // 4. Ahora sí, cargar la vista por defecto (Listado)
         handleListar();
     }
 

@@ -14,6 +14,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class MainController {
 
@@ -29,10 +30,10 @@ public class MainController {
             cargarDatosDeLogica(); // Carga inicial
             this.filteredData = new FilteredList<>(masterData, p -> true);
         } catch (Exception e) {
-            // Captura errores durante la inicialización (ej. error al leer CSVs)
+
             System.err.println("Error fatal al inicializar MainController: " + e.getMessage());
             e.printStackTrace();
-            // Considerar mostrar un Alert aquí si es posible o terminar la app
+
             throw new RuntimeException("No se pudo inicializar el controlador principal.", e);
         }
 
@@ -58,7 +59,6 @@ public class MainController {
             }
         } catch (Exception e) {
             System.err.println("Error al cargar datos de lógica a presentación: " + e.getMessage());
-            // Podrías mostrar una alerta aquí
             showAlert(Alert.AlertType.ERROR, "Error de Carga", "No se pudieron cargar todos los datos iniciales.");
         }
     }
@@ -71,19 +71,19 @@ public class MainController {
         String infoExtra = "";
         String dniStr = String.valueOf(p.getDni()); // Convertir DNI a String
 
-        // Usar instanceof con pattern matching (Java 16+) para seguridad
+
         if (p instanceof Paciente paciente) {
             rol = "Paciente";
-            infoExtra = paciente.getObraSocial() != null ? paciente.getObraSocial() : ""; // Chequeo null
+            infoExtra = paciente.getObraSocial() != null ? paciente.getObraSocial() : "";
         } else if (p instanceof Medico medico) {
             rol = "Médico";
-            infoExtra = medico.getMatricula() != null ? medico.getMatricula() : ""; // Chequeo null
+            infoExtra = medico.getMatricula() != null ? medico.getMatricula() : "";
         } else if (p instanceof Administrador admin) {
             rol = "Administrador";
-            infoExtra = admin.getArea() != null ? admin.getArea() : ""; // Chequeo null
+            infoExtra = admin.getArea() != null ? admin.getArea() : "";
         }
 
-        // Asegurarse que nombre y apellido no sean null
+
         String nombre = p.getNombre() != null ? p.getNombre() : "";
         String apellido = p.getApellido() != null ? p.getApellido() : "";
 
@@ -123,18 +123,18 @@ public class MainController {
     }
 
     public void buscarUsuarioPorDNI(String dni) {
-        String dniTrimmed = (dni != null) ? dni.trim() : ""; // Chequeo null
+        String dniTrimmed = (dni != null) ? dni.trim() : "";
         try {
             filteredData.setPredicate(usuario -> {
-                if (usuario == null || usuario.getDni() == null) return false; // Chequeo null en predicado
+                if (usuario == null || usuario.getDni() == null) return false;
                 if (dniTrimmed.isEmpty()) {
-                    return true; // Mostrar todos si la búsqueda está vacía
+                    return true;
                 }
-                // Comparación segura ignorando mayúsculas/minúsculas
+
                 return usuario.getDni().equalsIgnoreCase(dniTrimmed);
             });
 
-            // Mostrar mensaje solo si la búsqueda NO está vacía y no hay resultados
+
             if (filteredData.isEmpty() && !dniTrimmed.isEmpty()) {
                 showAlert(Alert.AlertType.INFORMATION, "Búsqueda", "No se encontró ningún usuario con DNI: " + dniTrimmed);
             }
@@ -153,7 +153,7 @@ public class MainController {
 
         // Validación básica de DTO y datos extra
         if (dto == null || !validarDatosUI(dto, genero, telefono)) {
-            return false; // Error ya mostrado en validarDatosUI
+            return false;
         }
 
         int dniInt;
@@ -161,7 +161,7 @@ public class MainController {
         char genChar;
         try {
             dniInt = Integer.parseInt(dto.getDni().trim());
-            // Validar teléfono como número positivo (o permitir 0 si es válido)
+
             telInt = Integer.parseInt(telefono.trim());
             if (telInt < 0) throw new NumberFormatException("Teléfono no puede ser negativo.");
 
@@ -187,12 +187,12 @@ public class MainController {
         try { // Envolver lógica de negocio en try-catch
             if (esModificacion) {
                 // --- LÓGICA DE MODIFICACIÓN ---
-                String rol = dto.getRol(); // Rol actual del DTO/Formulario
+                String rol = dto.getRol();
                 boolean datosModificados = false;
                 boolean passwordModificada = false;
 
                 // --- 1. MODIFICAR CONTRASEÑA (SI SE PROPORCIONÓ) ---
-                // Verifica si se ingresó una nueva contraseña en el formulario
+
                 if (password != null && !password.isEmpty()) {
                     // Llama al método específico en GestorUsuario para cambiar SÓLO la contraseña
                     passwordModificada = gestorUsuario.modificarPasswordUsuario(dniInt, password);
@@ -208,37 +208,34 @@ public class MainController {
                 // Es crucial que 'dto.getInfoExtra()' contenga el valor correcto del campo 'txtInfoExtra'.
                 if ("Paciente".equals(rol)) {
                     gestorUsuario.modificarPaciente(dniInt, dto.getNombre(), dto.getApellido(), genChar, telInt, dto.getInfoExtra());
-                    datosModificados = true; // Asumimos que se intentó modificar
+                    datosModificados = true;
                 } else if ("Médico".equals(rol)) {
                     Medico m = gestorUsuario.buscarMedicoPorDNI(dniInt);
                     String especialidadActual = (m != null) ? m.getEspecialidad() : "Default";
-                    // Asegúrate de pasar dto.getInfoExtra() como matrícula aquí
                     gestorUsuario.modificarMedico(dniInt, dto.getNombre(), dto.getApellido(), genChar, telInt, dto.getInfoExtra(), especialidadActual);
                     datosModificados = true;
                 } else if ("Administrador".equals(rol)) {
-                    // Asegúrate de pasar dto.getInfoExtra() como área aquí
+
                     gestorUsuario.modificarAdministrador(dniInt, dto.getNombre(), dto.getApellido(), genChar, telInt, dto.getInfoExtra());
                     datosModificados = true;
                 }
 
                 // --- 3. ACTUALIZAR UI y MOSTRAR MENSAJE ---
                 if(datosModificados || passwordModificada) {
-                    // Refrescar DTO en la lista masterData (más seguro que modificarlo directamente)
+
                     Optional<Usuario> usuarioEnListaOpt = masterData.stream().filter(u -> u != null && u.getDni() != null && u.getDni().equals(dto.getDni())).findFirst(); // Añadido chequeo null
                     if(usuarioEnListaOpt.isPresent()){
                         Usuario usuarioEnLista = usuarioEnListaOpt.get();
-                        // Actualizar el DTO en la lista con los valores del formulario
+
                         usuarioEnLista.setNombre(dto.getNombre());
                         usuarioEnLista.setApellido(dto.getApellido());
                         usuarioEnLista.setRol(dto.getRol());
-                        usuarioEnLista.setInfoExtra(dto.getInfoExtra()); // Actualizar infoExtra también
-                        // Forzar refresco de la tabla
+                        usuarioEnLista.setInfoExtra(dto.getInfoExtra());
+
                         masterData.set(masterData.indexOf(usuarioEnLista), usuarioEnLista);
                     } else {
                         System.err.println("Advertencia: Usuario modificado (DNI: " + dto.getDni() + ") no encontrado en masterData para refrescar UI.");
-                        // Como fallback, recargar todos los datos podría ser una opción,
-                        // pero puede ser confuso para el usuario.
-                        // cargarDatosDeLogica();
+
                     }
 
                     // Construir mensaje de éxito
@@ -248,15 +245,13 @@ public class MainController {
                     }
                     showAlert(Alert.AlertType.INFORMATION, "Éxito", mensajeExito);
                 } else {
-                    // Si no se modificaron ni datos ni contraseña (ej. se hizo clic en Guardar sin cambiar nada)
+
                     showAlert(Alert.AlertType.INFORMATION, "Información", "No se detectaron cambios para guardar.");
-                    // Podríamos retornar false aquí para indicar que no hubo "éxito" real,
-                    // pero mantener true no rompe el flujo de volver al listado.
-                    // return false;
+
                 }
             } else {
                 // --- LÓGICA DE ALTA ---
-                // Validar DNI único (GestorUsuario ya lo hace, pero doble check no daña)
+                // Validar DNI único
                 if (!gestorUsuario.validarDNIUnico(dto.getDni())) {
                     showAlert(Alert.AlertType.ERROR, "Error", "El DNI ingresado ya existe.");
                     return false;
@@ -271,42 +266,41 @@ public class MainController {
                 Persona nuevaPersonaLogica = null;
                 String rol = dto.getRol();
 
-                // Crear objeto de Lógica SIN HASH (GestorUsuario lo hará)
+                // Crear objeto de Lógica SIN HASH
                 if ("Paciente".equals(rol)) {
-                    // Asumiendo constructor Paciente(nombre, apellido, dni, genero, telefono, obraSocial)
+
                     nuevaPersonaLogica = new Paciente(dto.getNombre(), dto.getApellido(), dniInt, genChar, telInt, null, dto.getInfoExtra());
                     gestorUsuario.agregarPaciente((Paciente) nuevaPersonaLogica, password);
                 } else if ("Médico".equals(rol)) {
-                    // Asumiendo constructor Medico(nombre, apellido, dni, genero, telefono, matricula, especialidad)
+
                     nuevaPersonaLogica = new Medico(dto.getNombre(), dto.getApellido(), dniInt, genChar, telInt, null, dto.getInfoExtra(), "Especialidad_Default"); // Añadir especialidad default
                     gestorUsuario.agregarMedico((Medico) nuevaPersonaLogica, password);
                 } else if ("Administrador".equals(rol)) {
-                    // Asumiendo constructor Administrador(nombre, apellido, dni, genero, telefono, area)
+
                     nuevaPersonaLogica = new Administrador(dto.getNombre(), dto.getApellido(), dniInt, genChar, telInt, null, dto.getInfoExtra());
                     gestorUsuario.agregarAdministrador((Administrador) nuevaPersonaLogica, password);
                 }
 
                 // Verificar si se creó y añadir a la UI
                 if (nuevaPersonaLogica != null) {
-                    // Buscar el usuario recién creado para obtener el objeto completo (si es necesario)
-                    // O simplemente añadir el DTO que ya tenemos
-                    masterData.add(dto); // Añadir DTO a la lista observable
+
+                    masterData.add(dto);
                     showAlert(Alert.AlertType.INFORMATION, "Éxito", "Usuario '" + dto.getNombre() + "' registrado correctamente.");
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Error", "No se pudo crear el usuario (Rol no válido o error interno).");
-                    return false; // Indicar fallo
+                    return false;
                 }
             }
 
-            this.usuarioSeleccionado = null; // Deseleccionar después de guardar
-            return true; // Indicar éxito
+            this.usuarioSeleccionado = null;
+            return true;
 
         } catch (Exception e) {
-            // Captura general para errores inesperados durante la lógica de negocio
+
             System.err.println("Error al guardar usuario (DNI: " + dniInt + "): " + e.getMessage());
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Error Inesperado", "Ocurrió un error al guardar los datos del usuario.");
-            return false; // Indicar fallo
+            return false;
         }
     }
 
@@ -321,38 +315,73 @@ public class MainController {
         String dniAEliminarStr = usuarioSeleccionado.getDni();
         int dniAEliminarInt;
         try {
-            dniAEliminarInt = Integer.parseInt(dniAEliminarStr);
+            // Validar que el DNI no sea null o vacío antes de parsear
+            if (dniAEliminarStr == null || dniAEliminarStr.trim().isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Error Interno", "El usuario seleccionado no tiene un DNI válido.");
+                return;
+            }
+            dniAEliminarInt = Integer.parseInt(dniAEliminarStr.trim());
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Error Interno", "El DNI seleccionado '" + dniAEliminarStr + "' no es válido.");
+            showAlert(Alert.AlertType.ERROR, "Error Interno", "El DNI seleccionado '" + dniAEliminarStr + "' no es un número válido.");
             return;
         }
+
+        // --- PREVENIR ELIMINACIÓN DEL ADMIN POR DEFECTO ---
+        // Asumiendo que DEFAULT_ADMIN_DNI es 0 como en GestorUsuario
+        final int DEFAULT_ADMIN_DNI = 0; // Podrías hacerlo una constante de clase si prefieres
+        if (dniAEliminarInt == DEFAULT_ADMIN_DNI) {
+            showAlert(Alert.AlertType.ERROR, "Operación no permitida", "No se puede eliminar al administrador por defecto (DNI: 0).");
+            return;
+        }
+        // --- FIN PREVENCIÓN ---
 
 
         Optional<ButtonType> result = showConfirmation("¿Seguro que desea eliminar al usuario con DNI " + dniAEliminarStr + "?");
 
         if (result.isPresent() && result.get() == ButtonType.YES) {
             try {
-                // Llamar a la capa de Lógica
-                gestorUsuario.eliminarUsuario(dniAEliminarInt); // GestorUsuario maneja la persistencia
+                // 1. Llamar a la capa de Lógica para eliminar y persistir
+                gestorUsuario.eliminarUsuario(dniAEliminarInt); // GestorUsuario ahora maneja la persistencia y errores internos
 
-                // Si no hubo excepción, actualizar la UI (eliminar de masterData)
-                boolean removed = masterData.remove(usuarioSeleccionado);
-                if(removed){
-                    showAlert(Alert.AlertType.INFORMATION, "Eliminación", "Usuario eliminado correctamente.");
-                    usuarioSeleccionado = null; // Deseleccionar
+                // 2. Si la lógica no lanzó excepción, proceder a actualizar la UI
+                // --- CORRECCIÓN: Buscar y eliminar por DNI en masterData ---
+                final String dniFinal = dniAEliminarStr.trim(); // DNI a buscar
+                Optional<Usuario> usuarioParaEliminarOpt = masterData.stream()
+                        .filter(u -> u != null && u.getDni() != null && u.getDni().equals(dniFinal))
+                        .findFirst();
+
+                if (usuarioParaEliminarOpt.isPresent()) {
+                    boolean removed = masterData.remove(usuarioParaEliminarOpt.get());
+                    if (removed) {
+                        showAlert(Alert.AlertType.INFORMATION, "Eliminación", "Usuario eliminado correctamente.");
+                        usuarioSeleccionado = null; // Deseleccionar
+                    } else {
+                        // Esto sería muy raro si se encontró el Optional
+                        System.err.println("Advertencia: Se encontró el usuario en masterData pero remove() falló.");
+                        showAlert(Alert.AlertType.WARNING, "Error de UI", "No se pudo actualizar la lista visualmente.");
+                        cargarDatosDeLogica(); // Recargar como fallback si falla la eliminación visual
+                    }
                 } else {
-                    // Esto no debería pasar si la lógica fue exitosa y el usuario estaba seleccionado
-                    System.err.println("Advertencia: No se pudo remover el usuario de masterData después de eliminarlo en lógica.");
+                    // Si GestorUsuario eliminó pero no lo encontramos en masterData (raro)
+                    System.err.println("Advertencia: Usuario DNI " + dniFinal + " eliminado en lógica, pero no encontrado en masterData para actualizar UI.");
                     showAlert(Alert.AlertType.WARNING, "Advertencia", "El usuario fue eliminado, pero la lista no se actualizó correctamente.");
                     cargarDatosDeLogica(); // Recargar como fallback
                 }
+                // --- FIN CORRECCIÓN ---
 
-
+            } catch (IllegalArgumentException e) {
+                // Capturar errores específicos si GestorUsuario los lanza (ej. DNI inválido)
+                System.err.println("Error al eliminar (lógica): " + e.getMessage());
+                showAlert(Alert.AlertType.ERROR, "Error de Datos", e.getMessage());
+            } catch (RuntimeException e) { // Capturar otras posibles excepciones de la lógica
+                System.err.println("Error inesperado en lógica al eliminar DNI " + dniAEliminarInt + ": " + e.getMessage());
+                e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Error", "Ocurrió un error en la capa de lógica al eliminar.");
             } catch (Exception e) {
-                // Capturar errores específicos de GestorUsuario si los hubiera, o errores generales
-                System.err.println("Error al intentar eliminar usuario DNI " + dniAEliminarInt + ": " + e.getMessage());
+                // Capturar errores generales inesperados
+                System.err.println("Error inesperado al intentar eliminar usuario DNI " + dniAEliminarInt + ": " + e.getMessage());
                 e.printStackTrace(); // Para debug
-                showAlert(Alert.AlertType.ERROR, "Error de Eliminación", "Ocurrió un error al eliminar: " + e.getMessage());
+                showAlert(Alert.AlertType.ERROR, "Error de Eliminación", "Ocurrió un error inesperado al eliminar.");
             }
         }
     }
@@ -392,10 +421,9 @@ public class MainController {
             return false;
         }
 
-        // Podrían añadirse más validaciones (ej. formato DNI/Teléfono numérico, longitud, etc.) aquí
-        // pero las validaciones de formato principales se hacen al parsear en guardarUsuario.
 
-        return true; // Pasa validaciones básicas
+
+        return true;
     }
 
 
@@ -404,10 +432,9 @@ public class MainController {
     public void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
-        // Quitar header para un look más simple
         alert.setHeaderText(null);
         alert.setContentText(content);
-        alert.showAndWait(); // Espera a que el usuario cierre la alerta
+        alert.showAndWait();
     }
 
     public Optional<ButtonType> showConfirmation(String content) {
@@ -415,7 +442,7 @@ public class MainController {
         alert.setTitle("Confirmación");
         alert.setHeaderText(null); // Sin texto de cabecera
         alert.setContentText(content);
-        // Opcional: Cambiar texto de botones si se desea (ej. "Sí", "No")
+
         // ButtonType buttonTypeYes = new ButtonType("Sí", ButtonBar.ButtonData.YES);
         // ButtonType buttonTypeNo = new ButtonType("No", ButtonBar.ButtonData.NO);
         // alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo);

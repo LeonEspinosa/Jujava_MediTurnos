@@ -6,8 +6,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-
 import jujava.mediturnos.logica.GestorUsuario;
+import jujava.mediturnos.logica.entidades.Administrador;
 import jujava.mediturnos.logica.entidades.Persona;
 
 
@@ -22,31 +22,17 @@ public class LoginViewController {
     @FXML
     private Label lblError;
 
-    // Esta es la conexión crucial a tu capa de Lógica.
     private GestorUsuario gestorUsuario;
-
-    // Referencia al Stage (ventana) para poder cerrarla.
     private Stage loginStage;
-
-    // Referencia al controlador de la ventana principal para "despertarlo".
     private MainViewController mainViewController;
 
 
-    /**
-     * Método de inicialización. Se llama automáticamente después de cargar el FXML.
-     */
     @FXML
     private void initialize() {
-        // Creamos la instancia del gestor de lógica.
-        // Esto cargará los CSV (pacientes, medicos, admin) en memoria.
         this.gestorUsuario = new GestorUsuario();
-        lblError.setText(""); // Limpiamos cualquier error residual.
+        lblError.setText("");
     }
 
-    /**
-     * Método de configuración (Inyección de Dependencia Manual).
-     * Lo usaremos para pasarle la referencia de la ventana principal.
-     */
     public void initData(Stage loginStage, MainViewController mainViewController) {
         this.loginStage = loginStage;
         this.mainViewController = mainViewController;
@@ -55,15 +41,15 @@ public class LoginViewController {
 
     /**
      * Manejador del evento de clic en el botón "Ingresar".
-     * Aquí ocurre la magia de la autenticación.
+     * Modificado para mostrar mensaje específico si el usuario no es Admin.
      */
     @FXML
     private void handleLogin() {
         String dniStr = txtDni.getText();
         String password = txtPassword.getText();
 
-        // 1. Validación de entradas básicas (Capa de Presentación)
-        if (dniStr.trim().isEmpty() || password.trim().isEmpty()) {
+        // 1. Validación de entradas básicas
+        if (dniStr == null || dniStr.trim().isEmpty() || password == null || password.trim().isEmpty()) { // Chequeo null añadido
             mostrarError("DNI y Contraseña son obligatorios.");
             return;
         }
@@ -77,20 +63,37 @@ public class LoginViewController {
         }
 
         // 2. Autenticación (Llamada a la Capa de Lógica)
-        // Esta es la línea que depende de tu código actualizado.
         Persona usuarioAutenticado = gestorUsuario.autenticarUsuario(dni, password);
 
         // 3. Verificación de resultado
         if (usuarioAutenticado != null) {
-            // ¡ÉXITO!
-            System.out.println("Autenticación exitosa para: " + usuarioAutenticado.getNombre());
-            mostrarError(""); // Limpiar error
+            // --- ÉXITO ---
 
-            mainViewController.iniciarAplicacionPrincipal(usuarioAutenticado);
-            loginStage.close();
+            // 3.1 VERIFICAR SI ES ADMINISTRADOR (Si solo ellos pueden entrar)
+            if (usuarioAutenticado instanceof Administrador) {
+                System.out.println("Autenticación exitosa para Administrador: " + usuarioAutenticado.getNombre());
+                mostrarError(""); // Limpiar error
+                mainViewController.iniciarAplicacionPrincipal(usuarioAutenticado);
+                loginStage.close();
+            } else {
+                // Es un usuario válido (Paciente/Medico) pero no tiene permiso para entrar
+                System.out.println("Intento de login por usuario no administrador: " + usuarioAutenticado.getNombre());
+                mostrarError("Acceso denegado. Solo los administradores pueden iniciar sesión.");
+            }
 
         } else {
-            mostrarError("DNI o contraseña incorrectos.");
+
+            Persona usuarioExiste = gestorUsuario.buscarUsuarioPorDNI(dni); // Busca solo por DNI
+            if (usuarioExiste != null && !(usuarioExiste instanceof Administrador)) {
+
+                mostrarError("Acceso denegado. Solo los administradores pueden iniciar sesión.");
+            } else if (usuarioExiste == null){
+
+                mostrarError("DNI no encontrado en el sistema.");
+            } else {
+
+                mostrarError("DNI o contraseña incorrectos.");
+            }
         }
     }
 
@@ -98,6 +101,12 @@ public class LoginViewController {
      * Método helper para mostrar mensajes de error en la UI.
      */
     private void mostrarError(String mensaje) {
-        lblError.setText(mensaje);
+
+        if (lblError != null) {
+            lblError.setText(mensaje != null ? mensaje : "");
+        } else {
+            System.err.println("Error en LoginViewController: lblError es null. Mensaje no mostrado: " + mensaje);
+        }
     }
 }
+

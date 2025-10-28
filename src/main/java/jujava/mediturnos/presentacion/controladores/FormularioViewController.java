@@ -6,7 +6,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField; // Importar PasswordField
 import javafx.scene.control.TextField;
-// Se elimina la importación de VBox y RowConstraints si ya no se usan directamente para visibilidad
 // import javafx.scene.layout.VBox;
 // import javafx.scene.layout.RowConstraints;
 
@@ -22,17 +21,17 @@ public class FormularioViewController {
     @FXML private TextField txtGenero;
     @FXML private TextField txtTelefono;
 
-    // --- Campos de Contraseña ---
-    @FXML private Label lblPassword; // Ya lo tenías
-    @FXML private PasswordField txtPassword; // Ya lo tenías
-    @FXML private Label lblConfirmarPassword; // Nuevo Label
-    @FXML private PasswordField txtConfirmarPassword; // Nuevo PasswordField
-    // --- Fin Campos de Contraseña ---
 
-    // --- Campos Específicos (ahora individuales) ---
+    @FXML private Label lblPassword;
+    @FXML private PasswordField txtPassword;
+    @FXML private Label lblConfirmarPassword;
+    @FXML private PasswordField txtConfirmarPassword;
+
+
+
     @FXML private Label lblInfoExtra;
     @FXML private TextField txtInfoExtra;
-    // --- Fin Campos Específicos ---
+
 
     private MainController dataController;
     private MainViewController navigationController;
@@ -44,8 +43,7 @@ public class FormularioViewController {
         cmbRol.getItems().addAll(Arrays.asList("Paciente", "Médico", "Administrador"));
         cmbRol.valueProperty().addListener((obs, oldVal, newVal) -> actualizarCamposDinamicos(newVal));
 
-        // Asegurar estado inicial correcto para campos específicos
-        actualizarCamposDinamicos(null); // Oculta los campos específicos al inicio
+        actualizarCamposDinamicos(null);
     }
 
     public void initData(MainController dataController, MainViewController navigationController, Usuario usuario) {
@@ -54,22 +52,22 @@ public class FormularioViewController {
         this.usuarioActual = usuario;
 
         if (usuario == null) {
-            // Modo ALTA
+
             esModificacion = false;
             lblTitulo.setText("Formulario de Alta (Registro)");
-            // Limpiar campos por si acaso
+
             limpiarCampos();
-            // Los campos de contraseña son relevantes
+
         } else {
-            // Modo MODIFICACIÓN
+
             esModificacion = true;
             lblTitulo.setText("Formulario de Modificación");
             cargarDatosParaModificacion();
-            // Los campos de contraseña permiten cambiarla (o no)
+
             txtPassword.setPromptText("Nueva Contraseña (dejar vacío para no cambiar)");
             txtConfirmarPassword.setPromptText("Repita la nueva contraseña");
         }
-        // Actualizar visibilidad campos específicos según el rol cargado (o nulo en alta)
+
         actualizarCamposDinamicos(cmbRol.getValue());
     }
 
@@ -84,8 +82,8 @@ public class FormularioViewController {
         txtPassword.clear();
         txtConfirmarPassword.clear();
         txtInfoExtra.clear();
-        txtDni.setEditable(true); // Asegurar que DNI sea editable en Alta
-        txtDni.setStyle(""); // Quitar estilo de deshabilitado
+        txtDni.setEditable(true);
+        txtDni.setStyle("");
     }
 
     // Método para manejar visibilidad de campos específicos (AHORA INDIVIDUAL)
@@ -110,7 +108,6 @@ public class FormularioViewController {
             }
         }
 
-        // Aplicar visibilidad y textos a los componentes individuales
         if (lblInfoExtra != null && txtInfoExtra != null) {
             lblInfoExtra.setVisible(visible);
             lblInfoExtra.setManaged(visible);
@@ -155,49 +152,48 @@ public class FormularioViewController {
         String nombre = txtNombre.getText();
         String apellido = txtApellido.getText();
         String rol = cmbRol.getValue();
-        String infoExtra = (lblInfoExtra.isVisible()) ? txtInfoExtra.getText() : ""; // Usar visibilidad del label
+        String infoExtra = (lblInfoExtra.isVisible()) ? txtInfoExtra.getText() : "";
         String genero = txtGenero.getText();
         String telefono = txtTelefono.getText();
-        String password = txtPassword.getText(); // Siempre recolectar
-        String confirmarPassword = txtConfirmarPassword.getText(); // Siempre recolectar
+        String password = txtPassword.getText();
+        String confirmarPassword = txtConfirmarPassword.getText();
 
         Usuario usuarioParaGuardar;
-        String passwordAGuardar = null; // Variable para pasar a MainController
+        String passwordAGuardar = null;
 
         if (esModificacion) {
-            // --- Lógica MODIFICACIÓN ---
-            usuarioParaGuardar = usuarioActual; // Usamos el DTO existente
+
+            usuarioParaGuardar = usuarioActual;
             usuarioParaGuardar.setNombre(nombre);
             usuarioParaGuardar.setApellido(apellido);
             usuarioParaGuardar.setRol(rol);
             usuarioParaGuardar.setInfoExtra(infoExtra);
 
-            // Validar contraseña SÓLO si se ingresó algo
             if (!password.isEmpty()) {
                 if (!password.equals(confirmarPassword)) {
                     dataController.showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Error", "Las contraseñas no coinciden.");
                     return;
                 }
-                // Validar longitud mínima si se desea
-                if (password.length() < 4) { // Ejemplo de longitud mínima
+
+                if (password.length() < 4) {
                     dataController.showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Error", "La nueva contraseña debe tener al menos 4 caracteres.");
                     return;
                 }
-                passwordAGuardar = password; // Marcar para guardar la nueva contraseña
+                passwordAGuardar = password;
             } else {
-                // Si ambos campos están vacíos, no se cambia la contraseña
+
                 if (!confirmarPassword.isEmpty()) {
                     dataController.showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Error", "Ingrese la nueva contraseña en ambos campos para cambiarla, o deje ambos vacíos.");
                     return;
                 }
-                passwordAGuardar = null; // Indica a MainController que no hay cambio de contraseña
+                passwordAGuardar = null;
             }
 
         } else {
             // --- Lógica ALTA ---
-            usuarioParaGuardar = new Usuario(dni, nombre, apellido, rol, infoExtra); // Creamos DTO nuevo
+            usuarioParaGuardar = new Usuario(dni, nombre, apellido, rol, infoExtra);
 
-            // Validar contraseña SIEMPRE en Alta
+
             if (password.isEmpty()) {
                 dataController.showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Error", "La contraseña es obligatoria para nuevos usuarios.");
                 return;
@@ -207,14 +203,14 @@ public class FormularioViewController {
                 return;
             }
             // Validar longitud mínima si se desea
-            if (password.length() < 4) { // Ejemplo de longitud mínima
+            if (password.length() < 4) {
                 dataController.showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Error", "La contraseña debe tener al menos 4 caracteres.");
                 return;
             }
-            passwordAGuardar = password; // Siempre se guarda la contraseña en Alta
+            passwordAGuardar = password;
         }
 
-        // Llamar a MainController pasando la contraseña (o null si no cambia en modif.)
+        // Llamar a MainController pasando la contraseña
         boolean exito = dataController.guardarUsuario(usuarioParaGuardar, genero, telefono, esModificacion, passwordAGuardar);
 
         if (exito) {

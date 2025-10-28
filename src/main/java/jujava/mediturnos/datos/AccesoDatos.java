@@ -65,7 +65,7 @@ public class AccesoDatos {
                     int telefono = Integer.parseInt(datos[4].trim());
                     String obraSocial = datos[5];
                     String passwordHash = datos[6];
-                    lista.add(new Paciente(nombre, apellido, dni, genero, telefono, obraSocial,passwordHash));
+                    lista.add(new Paciente(nombre, apellido, dni, genero, telefono,passwordHash, obraSocial));
                 }
             }
             System.out.println("Pacientes cargados correctamente.");
@@ -117,9 +117,9 @@ public class AccesoDatos {
                     String matricula = datos[5];
                     String especialidad = datos[6];
                     String passwordHash = datos[7];
-                    lista.add(new Medico(nombre, apellido,dni, genero, telefono, matricula, especialidad,passwordHash));
+                    lista.add(new Medico(nombre, apellido,dni, genero, telefono,passwordHash, matricula, especialidad));
                 } else {
-                    // Mensaje de advertencia si la línea tiene formato incorrecto
+
                     System.err.println("Advertencia: Línea de médico inválida (campos incorrectos): " + linea);
                 }
             }
@@ -161,16 +161,15 @@ public class AccesoDatos {
             while ((linea = br.readLine()) != null) {
                 if (primera) { primera = false; continue; }
                 String[] datos = linea.split(",");
-                if (datos.length == 7) { // Correcto, son 7 columnas ahora
+                if (datos.length == 7) {
                     String nombre = datos[0];
                     String apellido = datos[1];
                     int dni = Integer.parseInt(datos[2].trim());
                     char genero = datos[3].trim().charAt(0);
                     int telefono = Integer.parseInt(datos[4].trim());
                     String area = datos[5];
-                    String passwordHash = datos[6]; // Esta es la columna del hash
-                    // Asegúrate que el constructor llamado aquí coincida exactamente con los parámetros
-                    lista.add(new Administrador(nombre, apellido, dni, genero, telefono, passwordHash, area)); // Parece correcto
+                    String passwordHash = datos[6];
+                    lista.add(new Administrador(nombre, apellido, dni, genero, telefono, passwordHash, area));
                 }
 
             }
