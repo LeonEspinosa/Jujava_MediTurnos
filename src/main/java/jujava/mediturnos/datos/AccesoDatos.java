@@ -3,6 +3,8 @@ package jujava.mediturnos.datos;
 import jujava.mediturnos.logica.entidades.Administrador;
 import jujava.mediturnos.logica.entidades.Medico;
 import jujava.mediturnos.logica.entidades.Paciente;
+import jujava.mediturnos.logica.entidades.Turno;
+import java.time.LocalDateTime;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -12,6 +14,8 @@ public class AccesoDatos {
     private static final String rutaPacientes = "archivos/pacientes.csv";
     private static final String rutaMedicos = "archivos/medicos.csv";
     private static final String rutaAdministrativos = "archivos/administrativos.csv";
+    private static final String rutaTurnos = "archivos/turnos.csv";
+    private static final String FORMATO_FECHA_HORA = "yyyy-MM-dd HH:mm";
 
     private static void asegurarDirectorio(String rutaArchivo) {
         File archivo = new File(rutaArchivo);
@@ -176,6 +180,59 @@ public class AccesoDatos {
             System.out.println("Administradores cargados correctamente.");
         } catch (IOException | NumberFormatException e) {
             System.out.println(" Error al cargar administradores: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    public static void guardarTurnos(List<Turno> listaTurnos) {
+        asegurarDirectorio(rutaTurnos);
+        try (PrintWriter pw = new PrintWriter(new FileWriter(rutaTurnos))) {
+            pw.println("idTurno,dniPaciente,dniMedico,especialidad,fechaHora,estado");
+            for (Turno t : listaTurnos) {
+                pw.println(t.getIdTurno() + "," +
+                        t.getDniPaciente() + "," +
+                        t.getDniMedico() + "," +
+                        t.getEspecialidad() + "," +
+                        t.getFechaHora().format(java.time.format.DateTimeFormatter.ofPattern(FORMATO_FECHA_HORA)) + "," +
+                        t.getEstado());
+            }
+            System.out.println("Turnos guardados correctamente.");
+        } catch (IOException e) {
+            System.out.println("Error al guardar turnos: " + e.getMessage());
+        }
+    }
+
+    public static List<Turno> cargarTurnos() {
+        List<Turno> lista = new ArrayList<>();
+        File archivo = new File(rutaTurnos);
+        if (!archivo.exists()) {
+            System.out.println(" No existe el archivo de turnos. Se devuelve lista vacía.");
+            return lista;
+        }
+        try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
+            String linea;
+            boolean primera = true;
+            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern(FORMATO_FECHA_HORA);
+            while ((linea = br.readLine()) != null) {
+                if (primera) { primera = false; continue; } // salto encabezado
+                String[] datos = linea.split(",");
+                if (datos.length == 6) {
+                    try {
+                        int idTurno = Integer.parseInt(datos[0].trim());
+                        int dniPaciente = Integer.parseInt(datos[1].trim());
+                        int dniMedico = Integer.parseInt(datos[2].trim());
+                        String especialidad = datos[3];
+                        LocalDateTime fechaHora = LocalDateTime.parse(datos[4].trim(), formatter);
+                        String estado = datos[5];
+                        lista.add(new Turno(idTurno, dniPaciente, dniMedico, especialidad, fechaHora, estado));
+                    } catch (NumberFormatException | java.time.format.DateTimeParseException e) {
+                        System.err.println("Advertencia: Línea de turno inválida: " + linea + ". Error: " + e.getMessage());
+                    }
+                }
+            }
+            System.out.println("Turnos cargados correctamente.");
+        } catch (IOException e) {
+            System.out.println("Error al cargar turnos: " + e.getMessage());
         }
         return lista;
     }

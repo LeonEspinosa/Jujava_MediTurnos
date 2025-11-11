@@ -4,6 +4,10 @@ import jujava.mediturnos.presentacion.modelos.Usuario;
 
 import jujava.mediturnos.presentacion.vista.AppMain;
 import jujava.mediturnos.logica.entidades.Persona;
+import jujava.mediturnos.logica.entidades.Administrador;
+import jujava.mediturnos.logica.entidades.Medico;
+import jujava.mediturnos.logica.entidades.Paciente;
+
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.application.Platform;
@@ -11,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 
@@ -20,6 +25,10 @@ public class MainViewController {
     private BorderPane contentArea;
     @FXML
     private Label lblUsuarioLogueado;
+    @FXML private VBox menuBox;
+    @FXML private VBox menuUsuarioAdmin;
+    @FXML private VBox menuUsuarioMedico;
+    @FXML private VBox menuUsuarioPaciente;
 
     private Stage primaryStage;
     private Persona usuarioLogueado;
@@ -47,15 +56,50 @@ public class MainViewController {
             this.primaryStage.show();
 
             this.primaryStage.centerOnScreen();
-        } else {
-            System.err.println("Error: PrimaryStage no fue inyectado en MainViewController.");
+        }
+        // 2. Ocultar todos los menús de Turnos al inicio
+        menuUsuarioAdmin.setVisible(false);
+        menuUsuarioAdmin.setManaged(false);
+        menuUsuarioMedico.setVisible(false);
+        menuUsuarioMedico.setManaged(false);
+        menuUsuarioPaciente.setVisible(false);
+        menuUsuarioPaciente.setManaged(false);
+
+        // 3. Controlar la visibilidad del menú de Gestión de Usuarios (solo Admin)
+        boolean esAdmin = usuario instanceof Administrador;
+        for (Node node : menuBox.getChildren()) {
+            // Utilizamos el ID de los botones de Gestión de Usuarios
+            if (node.getStyleClass().contains("menu-header") && node.getStyleClass().contains("menu-header")) {
+                if (((Label)node).getText().contains("Gestión de Usuarios")) {
+                    node.setVisible(esAdmin);
+                    node.setManaged(esAdmin);
+                }
+            } else if (node.getId() != null && (node.getId().equals("btnListar") || node.getId().equals("btnRegistro") || node.getId().equals("btnModificar"))) {
+                node.setVisible(esAdmin);
+                node.setManaged(esAdmin);
+            }
+        }
+        // 4. Configurar menús específicos por rol y cargar vista inicial
+        if (usuario instanceof Administrador) {
+            menuUsuarioAdmin.setVisible(true);
+            menuUsuarioAdmin.setManaged(true);
+            handleGestionarTurnos();
+
+        } else if (usuario instanceof Medico) {
+            menuUsuarioMedico.setVisible(true);
+            menuUsuarioMedico.setManaged(true);
+            handleMiAgenda();
+
+        } else if (usuario instanceof Paciente) {
+            menuUsuarioPaciente.setVisible(true);
+            menuUsuarioPaciente.setManaged(true);
+            handleSolicitarTurno();
         }
 
-        // 2. Actualizar la UI con la info del usuario
+        // 5. Actualizar la UI
         if (lblUsuarioLogueado != null) {
-            lblUsuarioLogueado.setText("Usuario: " + usuario.getNombre() + " " + usuario.getApellido());
-        } else {
-            System.err.println("Advertencia: lblUsuarioLogueado es null. ¿Olvidaste agregarlo a main-view.fxml?");
+            String rol = (usuario instanceof Administrador) ? "Admin" : (usuario instanceof Medico) ? "Médico" : (usuario instanceof Paciente) ? "Paciente" : "Usuario";
+            lblUsuarioLogueado.setText("Usuario (" + rol + "): " + usuario.getNombre() + " " + usuario.getApellido());
         }
 
 
@@ -87,7 +131,26 @@ public class MainViewController {
         Platform.exit();
     }
 
-    private void loadView(String fxmlFile, Usuario usuario) {
+    @FXML
+    public void handleSolicitarTurno() {
+        if (usuarioLogueado instanceof Paciente) {
+            loadView("solicitar-turno-view.fxml", null);
+        }
+    }
+    @FXML
+    public void handleMiAgenda() {
+        if (usuarioLogueado instanceof Medico) {
+            loadView("mi-agenda-view.fxml", null);
+        }
+    }
+    @FXML
+    public void handleGestionarTurnos() {
+        if (usuarioLogueado instanceof Administrador) {
+            loadView("gestionar-turnos-view.fxml", null);
+        }
+    }
+
+    public void loadView(String fxmlFile, Usuario usuario) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(AppMain.class.getResource("/jujava/mediturnos/" + fxmlFile));
@@ -101,6 +164,15 @@ public class MainViewController {
             } else if (fxmlFile.equals("formulario-view.fxml")) {
                 FormularioViewController controller = loader.getController();
                 controller.initData(dataController, this, usuario);
+            }else if (fxmlFile.equals("solicitar-turno-view.fxml") && usuarioLogueado instanceof Paciente) {
+                SolicitarTurnoViewController controller = loader.getController();
+                controller.initData(dataController, this, usuarioLogueado.getDni());
+            } else if (fxmlFile.equals("mi-agenda-view.fxml") && usuarioLogueado instanceof Medico) {
+                MiAgendaViewController controller = loader.getController();
+                controller.initData(dataController, this, usuarioLogueado.getDni());
+            } else if (fxmlFile.equals("gestionar-turnos-view.fxml") && usuarioLogueado instanceof Administrador) {
+                GestionarTurnosViewController controller = loader.getController();
+                controller.initData(dataController, this);
             }
 
             contentArea.setCenter(view);

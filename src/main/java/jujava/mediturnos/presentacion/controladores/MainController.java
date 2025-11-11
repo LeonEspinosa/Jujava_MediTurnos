@@ -5,7 +5,9 @@ import jujava.mediturnos.logica.entidades.Persona;
 import jujava.mediturnos.logica.entidades.Medico;
 import jujava.mediturnos.logica.entidades.Administrador;
 import jujava.mediturnos.logica.entidades.Paciente;
+import jujava.mediturnos.logica.entidades.Turno;
 import jujava.mediturnos.presentacion.modelos.Usuario;
+import jujava.mediturnos.presentacion.modelos.TurnoModel; // Nuevo import
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,19 +15,25 @@ import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MainController {
 
     private final GestorUsuario gestorUsuario;
+    private final GestorTurnos gestorTurno;
     private final ObservableList<Usuario> masterData;
     private final FilteredList<Usuario> filteredData;
     private Usuario usuarioSeleccionado;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     public MainController() {
         try {
             this.gestorUsuario = new GestorUsuario();
+            this.gestorTurno = new GestorTurnos(this.gestorUsuario);
             this.masterData = FXCollections.observableArrayList();
             cargarDatosDeLogica(); // Carga inicial
             this.filteredData = new FilteredList<>(masterData, p -> true);
@@ -91,6 +99,27 @@ public class MainController {
         return new Usuario(dniStr, nombre, apellido, rol, infoExtra);
     }
 
+    private TurnoModel turnoAListaPresentacion(Turno t) {
+        if (t == null) return null;
+        Persona paciente = getPersonaLogica(t.getDniPaciente());
+        Persona medico = getPersonaLogica(t.getDniMedico());
+
+        String nombreP = (paciente != null) ? paciente.getNombre() + " " + paciente.getApellido() : "DNI no encontrado";
+        String nombreM = (medico != null) ? medico.getNombre() + " " + medico.getApellido() : "DNI no encontrado";
+
+        String fechaHoraStr = t.getFechaHora().format(FORMATTER);
+
+        return new TurnoModel(
+                t.getIdTurno(),
+                String.valueOf(t.getDniPaciente()),
+                nombreP,
+                String.valueOf(t.getDniMedico()),
+                nombreM,
+                t.getEspecialidad(),
+                fechaHoraStr,
+                t.getEstado()
+        );
+    }
     // Busca en lógica, maneja posible error de parseo
     public Persona getPersonaLogica(String dniStr) {
         if (dniStr == null || dniStr.trim().isEmpty()) {
@@ -426,9 +455,50 @@ public class MainController {
         return true;
     }
 
+    public ObservableList<TurnoModel> getTurnosParaMedico(int dniMedico) {
+        List<Turno> turnosLogica = gestorTurno.getTurnosPorMedico(dniMedico);
+        List<TurnoModel> turnosPresentacion = turnosLogica.stream()
+                .map(this::turnoAListaPresentacion)
+                .collect(Collectors.toList());
+        return FXCollections.observableArrayList(turnosPresentacion);
+    }
+
+    public ObservableList<TurnoModel> getTodosLosTurnos() {
+        List<Turno> turnosLogica = gestorTurno.getTodosLosTurnos();
+        List<TurnoModel> turnosPresentacion = turnosLogica.stream()
+                .map(this::turnoAListaPresentacion)
+                .collect(Collectors.toList());
+        return FXCollections.observableArrayList(turnosPresentacion);
+    }
+
+    public boolean cancelarTurno(int idTurno) {
+        return gestorTurno.cancelarTurno(idTurno);
+    }
+
+    public List<String> getEspecialidades() {
+        // Llama a GestorTurnos, que a su vez usa GestorUsuario para obtener las especialidades.
+        return gestorTurno.getEspecialidadesDisponibles();
+    }
+
+    public List<Medico> getMedicosPorEspecialidad(String especialidad) {
+        return gestorTurno.getMedicosPorEspecialidad(especialidad);
+    }
+
+    public boolean solicitarTurno(int dniPaciente, int dniMedico, String especialidad, LocalDateTime fechaHora) {
+        return gestorTurno.solicitarTurno(dniPaciente, dniMedico, especialidad, fechaHora);
+    }
+
+    public boolean modificarTurnoAdmin(int idTurno, int dniMedico, String especialidad, LocalDateTime fechaHora, String estado) {
+        return gestorTurno.modificarTurno(idTurno, dniMedico, especialidad, fechaHora, estado);
+    }
+
+    public boolean completarTurno(int idTurno) {
+        return gestorTurno.completarTurno(idTurno);
+    }
+
+
 
     // --- Métodos de UI (Helpers) ---
-
     public void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);

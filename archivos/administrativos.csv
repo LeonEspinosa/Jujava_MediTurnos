@@ -1,2 +1,3 @@
 nombre,apellido,dni,genero,telefono,area,passwordHash
 Admin,Default,0,M,12345678,Sistemas,$2a$10$0s/371jsGGCgpIvlWUcnQ.7KUDwaD2j/Z0xjsxjb02kKizd762RFe
+juan,perez,2468,M,4141,caja,$2a$10$7s1.env5f2bFjDzIWOqrOOD.BoBugEnIluOAcZPYcIS65nj42t8EW
