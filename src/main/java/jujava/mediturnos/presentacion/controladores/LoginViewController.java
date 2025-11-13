@@ -7,9 +7,10 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import jujava.mediturnos.logica.GestorUsuario;
-import jujava.mediturnos.logica.entidades.Administrador;
 import jujava.mediturnos.logica.entidades.Persona;
-
+import jujava.mediturnos.logica.entidades.Administrador;
+import jujava.mediturnos.logica.entidades.Medico;
+import jujava.mediturnos.logica.entidades.Paciente;
 
 public class LoginViewController {
 
@@ -26,7 +27,6 @@ public class LoginViewController {
     private Stage loginStage;
     private MainViewController mainViewController;
 
-
     @FXML
     private void initialize() {
         this.gestorUsuario = new GestorUsuario();
@@ -38,18 +38,17 @@ public class LoginViewController {
         this.mainViewController = mainViewController;
     }
 
-
     /**
      * Manejador del evento de clic en el botón "Ingresar".
-     * Modificado para mostrar mensaje específico si el usuario no es Admin.
+     * Ahora permite el login de todos los roles (Admin, Médico, Paciente)
      */
     @FXML
     private void handleLogin() {
         String dniStr = txtDni.getText();
         String password = txtPassword.getText();
 
-        // 1. Validación de entradas básicas
-        if (dniStr == null || dniStr.trim().isEmpty() || password == null || password.trim().isEmpty()) { // Chequeo null añadido
+        // --- Validaciones básicas ---
+        if (dniStr == null || dniStr.trim().isEmpty() || password == null || password.trim().isEmpty()) {
             mostrarError("DNI y Contraseña son obligatorios.");
             return;
         }
@@ -62,46 +61,44 @@ public class LoginViewController {
             return;
         }
 
-        // 2. Autenticación (Llamada a la Capa de Lógica)
+        // --- Autenticación ---
         Persona usuarioAutenticado = gestorUsuario.autenticarUsuario(dni, password);
 
-        // 3. Verificación de resultado
         if (usuarioAutenticado != null) {
-            // --- ÉXITO ---
+            mostrarError(""); // limpiar mensaje de error
 
-            // 3.1 VERIFICAR SI ES ADMINISTRADOR (Si solo ellos pueden entrar)
+            // --- Mostrar en consola el tipo de usuario ---
             if (usuarioAutenticado instanceof Administrador) {
-                System.out.println("Autenticación exitosa para Administrador: " + usuarioAutenticado.getNombre());
-                mostrarError(""); // Limpiar error
-                mainViewController.iniciarAplicacionPrincipal(usuarioAutenticado);
-                loginStage.close();
+                System.out.println("Login exitoso (Administrador): " + usuarioAutenticado.getNombre());
+            } else if (usuarioAutenticado instanceof Medico) {
+                System.out.println("Login exitoso (Médico): " + usuarioAutenticado.getNombre());
+            } else if (usuarioAutenticado instanceof Paciente) {
+                System.out.println("Login exitoso (Paciente): " + usuarioAutenticado.getNombre());
             } else {
-                // Es un usuario válido (Paciente/Medico) pero no tiene permiso para entrar
-                System.out.println("Intento de login por usuario no administrador: " + usuarioAutenticado.getNombre());
-                mostrarError("Acceso denegado. Solo los administradores pueden iniciar sesión.");
+                System.out.println("Login exitoso (Desconocido): " + usuarioAutenticado.getNombre());
             }
 
+            // --- Pasar el usuario autenticado a la vista principal ---
+            mainViewController.iniciarAplicacionPrincipal(usuarioAutenticado);
+
+            // Cerrar ventana de login
+            loginStage.close();
+
         } else {
+            Persona usuarioExiste = gestorUsuario.buscarUsuarioPorDNI(dni);
 
-            Persona usuarioExiste = gestorUsuario.buscarUsuarioPorDNI(dni); // Busca solo por DNI
-            if (usuarioExiste != null && !(usuarioExiste instanceof Administrador)) {
-
-                mostrarError("Acceso denegado. Solo los administradores pueden iniciar sesión.");
-            } else if (usuarioExiste == null){
-
+            if (usuarioExiste == null) {
                 mostrarError("DNI no encontrado en el sistema.");
             } else {
-
-                mostrarError("DNI o contraseña incorrectos.");
+                mostrarError("Contraseña incorrecta.");
             }
         }
     }
 
     /**
-     * Método helper para mostrar mensajes de error en la UI.
+     * Muestra mensajes de error en la etiqueta lblError.
      */
     private void mostrarError(String mensaje) {
-
         if (lblError != null) {
             lblError.setText(mensaje != null ? mensaje : "");
         } else {
@@ -109,4 +106,3 @@ public class LoginViewController {
         }
     }
 }
-
