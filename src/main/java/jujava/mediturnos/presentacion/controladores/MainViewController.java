@@ -108,12 +108,12 @@ public class MainViewController {
 
     @FXML
     public void handleListar() {
-        loadView("listado-view.fxml", null);
+        loadView("listado-view.fxml",(Usuario) null);
     }
 
     @FXML
     public void handleRegistro() {
-        loadView("formulario-view.fxml", null);
+        loadView("formulario-view.fxml",(Usuario) null);
     }
 
     @FXML
@@ -134,19 +134,19 @@ public class MainViewController {
     @FXML
     public void handleSolicitarTurno() {
         if (usuarioLogueado instanceof Paciente) {
-            loadView("solicitar-turno-view.fxml", null);
+            loadView("solicitar-turno-view.fxml",(Usuario) null);
         }
     }
     @FXML
     public void handleMiAgenda() {
         if (usuarioLogueado instanceof Medico) {
-            loadView("mi-agenda-view.fxml", null);
-        }
+            loadView("mi-agenda-view.fxml",(Usuario) null);
+        } //crear otro loadview pa fmxl y turnomodel
     }
     @FXML
     public void handleGestionarTurnos() {
         if (usuarioLogueado instanceof Administrador) {
-            loadView("gestionar-turnos-view.fxml", null);
+            loadView("gestionar-turnos-view.fxml",(Usuario) null);
         }
     }
 
@@ -173,6 +173,32 @@ public class MainViewController {
             } else if (fxmlFile.equals("gestionar-turnos-view.fxml") && usuarioLogueado instanceof Administrador) {
                 GestionarTurnosViewController controller = loader.getController();
                 controller.initData(dataController, this);
+            }
+
+            contentArea.setCenter(view);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            dataController.showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Error", "No se pudo cargar la vista: " + fxmlFile);
+        }
+    }
+
+    public void loadView(String fxmlFile, jujava.mediturnos.presentacion.modelos.TurnoModel turno) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            // Carga el FXML
+            loader.setLocation(AppMain.class.getResource("/jujava/mediturnos/" + fxmlFile));
+
+            Node view = loader.load();
+
+            // Pasa el control (Inyección de Dependencia)
+            if (fxmlFile.equals("formulario-modificar-turno-view.fxml")) {
+                // Se asume que este es el controlador para el formulario de modificación de turnos
+                FormularioModificarTurnoViewController controller = loader.getController();
+                controller.initData(dataController, this, turno); // Llama a initData con el TurnoModel
+            } else {
+                // Manejo de caso inesperado para esta sobrecarga
+                System.err.println("Error: loadView(String, TurnoModel) llamado con FXML inesperado: " + fxmlFile);
             }
 
             contentArea.setCenter(view);
