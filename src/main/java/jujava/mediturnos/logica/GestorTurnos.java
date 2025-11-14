@@ -3,6 +3,8 @@ package jujava.mediturnos.logica;
 import jujava.mediturnos.datos.AccesoDatos;
 import jujava.mediturnos.logica.entidades.Medico;
 import jujava.mediturnos.logica.entidades.Turno;
+import jujava.mediturnos.logica.entidades.Paciente;
+import jujava.mediturnos.logica.GestorUsuario;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -129,4 +131,51 @@ public class GestorTurnos {
                 .filter(m -> especialidad.equals(m.getEspecialidad()))
                 .collect(Collectors.toList());
     }
+
+    //BUSCAR TURNO
+    public Turno buscarTurno(int idTurno) {
+        for (Turno t : turnos) {
+            if (t.getIdTurno() == idTurno) return t;}
+        return null;}
+
+    //VALIDACION TURNO
+    public boolean validacionTurnoHorario(int dniMedico, LocalDateTime fechaHora) {
+        for (Turno t : turnos) {
+            if (t.getDniMedico() == dniMedico &&
+                    t.getFechaHora().equals(fechaHora) &&
+                    t.getEstado().equalsIgnoreCase("pendiente")) {
+                return false;}}//horario no disponible
+        return true;} // horario disponible
+
+
+    //MODIFICAR TURNO
+    public void modificarTurno(Turno turnoModificado) {
+        Turno turnoOriginal = buscarTurno(turnoModificado.getIdTurno());
+        if (turnoOriginal == null) {
+            System.out.println("turno no encontrado");
+            return;}
+
+        //valida que el paciente exista
+        GestorUsuario gestor= new GestorUsuario();
+        Paciente paciente = gestor.buscarPacientePorDNI(turnoModificado.getDniPaciente());
+        if (paciente == null) {
+            System.out.println("paciente no existe");
+            return;}
+
+        // valida que el medico este disponible
+        if (!validacionTurnoHorario(turnoModificado.getDniMedico(), turnoModificado.getFechaHora())) {
+            System.out.println("el medico ya tiene un turno en ese horario");
+            return;}
+
+        // aplica las modificaciones
+        turnoOriginal.setDniPaciente(turnoModificado.getDniPaciente());
+        turnoOriginal.setDniMedico(turnoModificado.getDniMedico());
+        turnoOriginal.setEspecialidad(turnoModificado.getEspecialidad());
+        turnoOriginal.setFechaHora(turnoModificado.getFechaHora());
+        turnoOriginal.setEstado(turnoModificado.getEstado());
+
+        AccesoDatos.guardarTurnos(turnos);
+        System.out.println("turno modificado");}
+
+
 }
