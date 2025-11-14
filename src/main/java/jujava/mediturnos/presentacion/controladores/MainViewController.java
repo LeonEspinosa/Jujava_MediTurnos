@@ -6,6 +6,7 @@ import jujava.mediturnos.logica.entidades.Persona;
 import jujava.mediturnos.logica.entidades.Administrador;
 import jujava.mediturnos.logica.entidades.Medico;
 import jujava.mediturnos.logica.entidades.Paciente;
+import jujava.mediturnos.presentacion.controladores.GestionarEspecialidadesViewController;
 
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
@@ -37,6 +38,13 @@ public class MainViewController {
     @FXML
     private void initialize() {
         this.dataController = new MainController();
+    }
+    @FXML
+    public void handleGestionarEspecialidades() {
+        if (usuarioLogueado instanceof Administrador) {
+            // Llama al loadView con el nombre del FXML que creamos
+            loadView("gestionar-especialidades-view.fxml", (Usuario) null);
+        }
     }
 
     public void setPrimaryStage(Stage primaryStage) {
@@ -169,6 +177,10 @@ public class MainViewController {
                 controller.initData(dataController, this, usuarioLogueado.getDni());
             } else if (fxmlFile.equals("gestionar-turnos-view.fxml") && usuarioLogueado instanceof Administrador) {
                 GestionarTurnosViewController controller = loader.getController();
+                controller.initData(dataController, this);
+            } else if (fxmlFile.equals("gestionar-especialidades-view.fxml") && usuarioLogueado instanceof Administrador) {
+                // Llama al initData del nuevo controlador
+                GestionarEspecialidadesViewController controller = loader.getController();
                 controller.initData(dataController, this);
             }
 

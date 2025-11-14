@@ -14,10 +14,13 @@ import java.util.stream.Collectors;
 public class GestorTurnos {
     private List<Turno> turnos;
     private final GestorUsuario gestorUsuario;
+    private List<String> especialidades;
 
     public GestorTurnos(GestorUsuario gestorUsuario) {
         this.gestorUsuario = gestorUsuario;
         this.turnos = AccesoDatos.cargarTurnos();
+        this.especialidades = AccesoDatos.cargarEspecialidades();
+        InicializadorDatos.verificarYPoblarEspecialidades(this.especialidades);
     }
 
     public List<Turno> getTurnos() {
@@ -117,10 +120,7 @@ public class GestorTurnos {
 
     // --- MÉTODOS HELPER (para la UI del Paciente) ---
     public List<String> getEspecialidadesDisponibles() {
-        return gestorUsuario.getMedicos().stream()
-                .map(Medico::getEspecialidad)
-                .distinct()
-                .collect(Collectors.toList());
+        return this.especialidades;
     }
 
     public List<Medico> getMedicosPorEspecialidad(String especialidad) {
@@ -128,7 +128,7 @@ public class GestorTurnos {
             return new ArrayList<>();
         }
         return gestorUsuario.getMedicos().stream()
-                .filter(m -> especialidad.equals(m.getEspecialidad()))
+                .filter(m -> especialidad.equalsIgnoreCase(m.getEspecialidad()))
                 .collect(Collectors.toList());
     }
 
@@ -176,6 +176,57 @@ public class GestorTurnos {
 
         AccesoDatos.guardarTurnos(turnos);
         System.out.println("turno modificado");}
+
+    public boolean agregarEspecialidad(String nuevaEspecialidad) {
+        if (nuevaEspecialidad == null || nuevaEspecialidad.trim().isEmpty()) {
+            System.err.println("Error: El nombre de la especialidad no puede estar vacío.");
+            return false;
+        }
+
+        String especialidadLimpia = nuevaEspecialidad.trim();
+
+        // Buscamos si ya existe (ignorando mayúsculas/minúsculas)
+        boolean yaExiste = especialidades.stream()
+                .anyMatch(e -> e.equalsIgnoreCase(especialidadLimpia));
+
+        if (yaExiste) {
+            System.out.println("Error: La especialidad '" + especialidadLimpia + "' ya existe.");
+            return false;
+        }
+
+        // Si no existe, la agregamos
+        this.especialidades.add(especialidadLimpia);
+        AccesoDatos.guardarEspecialidades(this.especialidades);
+        System.out.println("Especialidad '" + especialidadLimpia + "' agregada.");
+        return true;
+    }
+
+    public boolean eliminarEspecialidad(String especialidadAEliminar) {
+        if (especialidadAEliminar == null || especialidadAEliminar.trim().isEmpty()) {
+            return false;
+        }
+
+        // 1. Validar que ningún médico esté usando esta especialidad
+        boolean enUso = gestorUsuario.getMedicos().stream()
+                .anyMatch(medico -> medico.getEspecialidad().equalsIgnoreCase(especialidadAEliminar));
+
+        if (enUso) {
+            System.err.println("Error: No se puede eliminar la especialidad '" + especialidadAEliminar + "' porque está asignada a uno o más médicos.");
+            return false;
+        }
+
+        // 2. Si no está en uso, intentamos eliminarla de la lista
+        boolean eliminado = this.especialidades.removeIf(e -> e.equalsIgnoreCase(especialidadAEliminar));
+
+        if (eliminado) {
+            AccesoDatos.guardarEspecialidades(this.especialidades);
+            System.out.println("Especialidad '" + especialidadAEliminar + "' eliminada.");
+        } else {
+            System.err.println("Error: No se encontró la especialidad '" + especialidadAEliminar + "' para eliminar.");
+        }
+
+        return eliminado;
+    }
 
 
 }

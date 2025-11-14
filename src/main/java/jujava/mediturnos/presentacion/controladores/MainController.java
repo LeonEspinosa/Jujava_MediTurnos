@@ -519,5 +519,13 @@ public class MainController {
 
         return alert.showAndWait(); // Devuelve el botón presionado
     }
+
+    public boolean agregarEspecialidad(String nuevaEspecialidad) {
+        return gestorTurno.agregarEspecialidad(nuevaEspecialidad);
+    }
+
+    public boolean eliminarEspecialidad(String especialidad) {
+        return gestorTurno.eliminarEspecialidad(especialidad);
+    }
 }
 

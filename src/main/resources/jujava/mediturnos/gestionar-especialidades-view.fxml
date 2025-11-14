@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Esta es la vista para el CRUD de Especialidades -->
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jujava.mediturnos.presentacion.controladores.GestionarEspecialidadesViewController">
+    <children>
+        <Label styleClass="view-title" text="Gestión de Especialidades" />
+
+        <!-- Sección para agregar nueva especialidad -->
+        <HBox spacing="10.0">
+            <children>
+                <TextField fx:id="txtNuevaEspecialidad" promptText="Nombre de la nueva especialidad" HBox.hgrow="ALWAYS" />
+                <Button fx:id="btnAgregar" mnemonicParsing="false" onAction="#handleAgregar" styleClass="button-primary" text="Agregar" />
+            </children>
+        </HBox>
+
+        <!-- Lista de especialidades existentes -->
+        <Label text="Especialidades Existentes:" />
+        <ListView fx:id="lstEspecialidades" VBox.vgrow="ALWAYS" />
+
+        <!-- Botón para eliminar -->
+        <HBox alignment="CENTER_RIGHT">
+            <children>
+                <Button fx:id="btnEliminar" mnemonicParsing="false" onAction="#handleEliminar" styleClass="button-danger" text="Eliminar Seleccionada" disable="true" />
+            </children>
+        </HBox>
+    </children>
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+</VBox>

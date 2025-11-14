@@ -1,4 +1,3 @@
 nombre,apellido,dni,genero,telefono,obraSocial,PasswordHash
-Paciente,Apellido Paciente,1234,F,1234,1234,$2a$10$EeqSIXv7X0WKET89ruyIyuTIVNwAalPuu6BhUwSYUpI3bv2nuJo2e
-alan,yapura,987,M,131,OSDE,$2a$10$IeKfMXAwvAhgDkRqi.HhMOBPqpDhqUoVWcnAx93pWqUW12xUxNTG.
-Paciente,asdM,4321,M,1231825317,Osde,$2a$10$I4H9QPH8O6/aTFfqE/oNu.JA.y8l0v26uag4DkMkmAUcchg2EOnWe
+Paciente,Default,2,M,333333,OSDE,$2a$10$LnKeMNdTpiaZw6Nae2euT.AvD0jJw1ENvUnIsMkqHWZ8w.4tI5UcK
+Mateo,Alvarado,45123789,M,333333,OSDE,$2a$10$LnKeMNdTpiaZw6Nae2euT.AvD0jJw1ENvUnIsMkqHWZ8w.4tI5UcK

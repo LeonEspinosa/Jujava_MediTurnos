@@ -47,6 +47,21 @@ public class FormularioModificarTurnoViewController {
 
         // Inicializar ComboBox de Estados
         cmbEstado.getItems().addAll(Arrays.asList("Pendiente", "Confirmado", "Cancelado", "Realizado"));
+        dtpFecha.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                LocalDate hoy = LocalDate.now();
+
+                // Deshabilita la celda si la fecha es anterior a hoy
+                // (Permitimos "hoy" por si se modifica un turno para más tarde en el día)
+                setDisable(empty || date.isBefore(hoy));
+
+                if (date.isBefore(hoy)) {
+                    setStyle("-fx-background-color: #ffc0c0;");
+                }
+            }
+        });
 
         // Listener para actualizar la lista de médicos (Aunque no se permite cambiar Especialidad,
         // este listener sirve para reaccionar si por alguna razón la Especialidad cambiara o se actualizara)

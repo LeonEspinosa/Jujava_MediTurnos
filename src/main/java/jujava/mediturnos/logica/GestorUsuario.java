@@ -14,39 +14,12 @@ public class GestorUsuario {
     public List<Paciente> pacientes;
     public List<Medico> medicos;
     public List<Administrador> administradores;
-    private static final int DEFAULT_ADMIN_DNI = 0;
-    //public static final String DEFAULT_ADMIN_PASS = "admin";
 
     public GestorUsuario() {
         this.pacientes = AccesoDatos.cargarPacientes();
         this.medicos = AccesoDatos.cargarMedicos();
         this.administradores = AccesoDatos.cargarAdministradores();
-        crearAdminPorDefectoSiNoExiste();
-    }
-
-    private void crearAdminPorDefectoSiNoExiste() {
-        Persona adminExistente = buscarUsuarioPorDNI(DEFAULT_ADMIN_DNI);
-
-
-        if (adminExistente == null || !(adminExistente instanceof Administrador)) {
-            System.out.println("Administrador por defecto (DNI: " + DEFAULT_ADMIN_DNI + ") no encontrado. Creando...");
-            //Datos de Ejemplo
-            String nombre = "Admin";
-            String apellido = "Default";
-            char genero = 'M';
-            int telefono = 12345678;
-            String area = "Sistemas";
-            String contraseña = "1234";
-
-            String passwordHash = BCrypt.hashpw(contraseña, BCrypt.gensalt());
-            Administrador adminPorDefecto = new Administrador(nombre, apellido, DEFAULT_ADMIN_DNI, genero, telefono, passwordHash, area);
-            this.administradores.add(adminPorDefecto);
-            AccesoDatos.guardarAdministradores(this.administradores);
-
-            System.out.println("Administrador por defecto creado y guardado.");
-        } else {
-            System.out.println("Administrador por defecto (DNI: " + DEFAULT_ADMIN_DNI + ") ya existe.");
-        }
+        InicializadorDatos.verificarYPoblarUsuarios(this.pacientes, this.medicos, this.administradores);
     }
 
     public List<Paciente> getPacientes() {
@@ -72,6 +45,14 @@ public class GestorUsuario {
         } catch (NumberFormatException e) {
             System.out.println("Error. El DNI debe ser un número entero positivo.");
             return false;
+        }
+        if (dni == 0 || dni == 1 || dni == 2) {
+            Persona usuarioExistente = buscarUsuarioPorDNI(dni);
+            // Solo es un problema si el usuario ya existe (que debería)
+            if (usuarioExistente != null) {
+                System.out.println("Error. El DNI " + dni + " está reservado para usuarios de prueba.");
+                return false;
+            }
         }
         for (Paciente p : pacientes) if (p.getDni() == dni) return false;
         for (Medico m : medicos) if (m.getDni() == dni) return false;
@@ -99,6 +80,10 @@ public class GestorUsuario {
     public void eliminarUsuario(int DNI) {
         Persona usuario = buscarUsuarioPorDNI(DNI);
         if (usuario != null) {
+            if (DNI == 0 || DNI == 1 || DNI == 2) {
+                System.err.println("Error: No se pueden eliminar los usuarios de prueba por defecto (DNI 0, 1, 2).");
+                return;
+            }
             if (usuario instanceof Paciente) {
                 pacientes.remove(usuario);
                 AccesoDatos.guardarPacientes(pacientes);
@@ -198,6 +183,10 @@ public class GestorUsuario {
             return null;
         }
         String hashGuardado = usuario.getPasswordHash();
+        if (hashGuardado == null || hashGuardado.isEmpty()) {
+            System.err.println("Error: El usuario DNI " + dni + " no tiene una contraseña (hash) almacenada.");
+            return null;
+        }
         if (BCrypt.checkpw(passwordIngresada, hashGuardado)) {
             return usuario;
         } else {
@@ -211,7 +200,7 @@ public class GestorUsuario {
             System.err.println("Error modificar contraseña: La nueva contraseña no puede estar vacía.");
             return false;
         }
-        if (DNI == DEFAULT_ADMIN_DNI && nuevaPassword.length() < 4) { // Ejemplo: Requerir longitud mínima para admin
+        if (DNI == 0 && nuevaPassword.length() < 4) {
             System.err.println("Error modificar contraseña: La contraseña del admin por defecto debe tener al menos 4 caracteres.");
             return false;
         }

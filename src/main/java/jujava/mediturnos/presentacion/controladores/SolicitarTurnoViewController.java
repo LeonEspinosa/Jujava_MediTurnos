@@ -4,12 +4,14 @@ import jujava.mediturnos.logica.entidades.Medico;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Alert;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 import java.time.LocalTime;
 import java.util.stream.Collectors;
 import java.util.List;
@@ -37,6 +39,19 @@ public class SolicitarTurnoViewController {
 
         cmbEspecialidad.valueProperty().addListener((obs, oldVal, newVal) -> {
             cargarMedicosPorEspecialidad(newVal);
+        });
+        dtpFecha.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                LocalDate hoy = LocalDate.now();
+
+                setDisable(empty || date.isBefore(hoy));
+
+                if (date.isBefore(hoy)) {
+                    setStyle("-fx-background-color: #ffc0c0;");
+                }
+            }
         });
     }
 

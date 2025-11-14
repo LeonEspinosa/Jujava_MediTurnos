@@ -6,6 +6,7 @@ import jujava.mediturnos.logica.entidades.Paciente;
 import jujava.mediturnos.logica.entidades.Turno;
 import java.time.LocalDateTime;
 
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ public class AccesoDatos {
     private static final String rutaAdministrativos = "archivos/administrativos.csv";
     private static final String rutaTurnos = "archivos/turnos.csv";
     private static final String FORMATO_FECHA_HORA = "yyyy-MM-dd HH:mm";
+    private static final String rutaEspecialidades = "archivos/especialidades.csv";
 
     private static void asegurarDirectorio(String rutaArchivo) {
         File archivo = new File(rutaArchivo);
@@ -234,6 +236,39 @@ public class AccesoDatos {
         } catch (IOException e) {
             System.out.println("Error al cargar turnos: " + e.getMessage());
         }
+        return lista;
+    }
+    public static void guardarEspecialidades(List<String> listaEspecialidades) {
+        asegurarDirectorio(rutaEspecialidades);
+        try (PrintWriter pw = new PrintWriter(new FileWriter(rutaEspecialidades))) {
+            for (String especialidad : listaEspecialidades) {
+                pw.println(especialidad);
+            }
+            System.out.println("Especialidades guardadas correctamente.");
+        } catch (IOException e) {
+            System.out.println("Error al guardar especialidades: " + e.getMessage());
+        }
+    }
+
+    public static List<String> cargarEspecialidades() {
+        List<String> lista = new ArrayList<>();
+        File archivo = new File(rutaEspecialidades);
+        if (!archivo.exists()) {
+            System.out.println(" No existe el archivo de especialidades. Se devuelve lista vacía.");
+            return lista;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                if (linea.trim().isEmpty()) continue;
+                lista.add(linea.trim());
+            }
+            System.out.println("Especialidades cargadas correctamente.");
+        } catch (IOException e) {
+            System.out.println(" Error al cargar especialidades: " + e.getMessage());
+        }
+
         return lista;
     }
 }
