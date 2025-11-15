@@ -20,7 +20,36 @@
                 <Button fx:id="btnListar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleListar" styleClass="menu-button" text="Listar / Buscar" />
                 <Button fx:id="btnRegistro" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleRegistro" styleClass="menu-button" text="Registro (Alta)" />
                 <Button fx:id="btnModificar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleModificacion" styleClass="menu-button" text="Modificación" />
+
+                <Separator prefWidth="200.0" />
+
+                <VBox fx:id="menuUsuarioAdmin" spacing="10.0" managed="false" visible="false">
+                    <Label styleClass="menu-header" text="Gestión de Turnos (Admin)" />
+                    <Button fx:id="btnGestionarTurnos" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleGestionarTurnos" styleClass="menu-button" text="Gestionar Turnos" />
+                    <Button fx:id="btnGestionarEspecialidades" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleGestionarEspecialidades" styleClass="menu-button" text="Gestionar Especialidades" />
+                    <padding>
+                        <Insets top="5.0" />
+                    </padding>
+                </VBox>
+
+                <VBox fx:id="menuUsuarioMedico" spacing="10.0" managed="false" visible="false">
+                    <Label styleClass="menu-header" text="Gestión de Turnos (Médico)" />
+                    <Button fx:id="btnMiAgenda" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleMiAgenda" styleClass="menu-button" text="Mi Agenda" />
+                    <padding>
+                        <Insets top="5.0" />
+                    </padding>
+                </VBox>
+
+                <VBox fx:id="menuUsuarioPaciente" spacing="10.0" managed="false" visible="false">
+                    <Label styleClass="menu-header" text="Gestión de Turnos (Paciente)" />
+                    <Button fx:id="btnSolicitarTurno" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleSolicitarTurno" styleClass="menu-button" text="Solicitar Turno" />
+                    <padding>
+                        <Insets top="5.0" />
+                    </padding>
+                </VBox>
+
                 <VBox VBox.vgrow="ALWAYS" />
+
                 <Separator prefWidth="200.0" />
                 <Button fx:id="btnSalir" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleSalir" styleClass="menu-button-danger" text="Salir" />
             </children>
@@ -28,6 +57,7 @@
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
             </padding>
         </VBox>
+
     </left>
     <center>
         <BorderPane fx:id="contentArea" prefHeight="200.0" prefWidth="200.0">
@@ -41,4 +71,3 @@
         </BorderPane>
     </center>
 </BorderPane>
-

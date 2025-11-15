@@ -34,6 +34,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
                 <Label text="Rol:" GridPane.halignment="RIGHT" />
@@ -64,6 +65,14 @@
                     <managed>false</managed>
                     <visible>false</visible>
                 </TextField>
+                <Label fx:id="lblEspecialidad" text="Especialidad:" GridPane.halignment="RIGHT" GridPane.rowIndex="9">
+                    <managed>false</managed>
+                    <visible>false</visible>
+                </Label>
+                <ComboBox fx:id="cmbEspecialidad" maxWidth="1.7976931348623157E308" promptText="Seleccione Especialidad" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                    <managed>false</managed>
+                    <visible>false</visible>
+                </ComboBox>
 
             </children>
         </GridPane>

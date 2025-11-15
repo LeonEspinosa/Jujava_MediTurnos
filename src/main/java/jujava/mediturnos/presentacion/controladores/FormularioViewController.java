@@ -6,6 +6,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField; // Importar PasswordField
 import javafx.scene.control.TextField;
+import javafx.collections.FXCollections;
+import java.util.List;
 // import javafx.scene.layout.VBox;
 // import javafx.scene.layout.RowConstraints;
 
@@ -20,6 +22,9 @@ public class FormularioViewController {
     @FXML private TextField txtApellido;
     @FXML private TextField txtGenero;
     @FXML private TextField txtTelefono;
+
+    @FXML private Label lblEspecialidad;
+    @FXML private ComboBox<String> cmbEspecialidad;
 
 
     @FXML private Label lblPassword;
@@ -62,13 +67,17 @@ public class FormularioViewController {
 
             esModificacion = true;
             lblTitulo.setText("Formulario de Modificación");
-            cargarDatosParaModificacion();
+            //cargarDatosParaModificacion();
 
             txtPassword.setPromptText("Nueva Contraseña (dejar vacío para no cambiar)");
             txtConfirmarPassword.setPromptText("Repita la nueva contraseña");
         }
 
         actualizarCamposDinamicos(cmbRol.getValue());
+
+        if (esModificacion) {
+            cargarDatosParaModificacion();
+        }
     }
 
     // Método para limpiar campos (útil en Alta)
@@ -82,6 +91,10 @@ public class FormularioViewController {
         txtPassword.clear();
         txtConfirmarPassword.clear();
         txtInfoExtra.clear();
+        if (cmbEspecialidad != null) {
+            cmbEspecialidad.getItems().clear();
+            cmbEspecialidad.setValue(null);
+        }
         txtDni.setEditable(true);
         txtDni.setStyle("");
     }
@@ -119,6 +132,27 @@ public class FormularioViewController {
                 txtInfoExtra.setPromptText(promptText);
             }
         }
+        boolean medicoVisible = "Médico".equals(rol);
+
+        if (lblEspecialidad != null && cmbEspecialidad != null) {
+            lblEspecialidad.setVisible(medicoVisible);
+            lblEspecialidad.setManaged(medicoVisible);
+            cmbEspecialidad.setVisible(medicoVisible);
+            cmbEspecialidad.setManaged(medicoVisible);
+
+            if (medicoVisible && dataController != null) {
+                // Si es médico, poblamos el ComboBox
+                try {
+                    List<String> especialidades = dataController.getEspecialidades();
+                    cmbEspecialidad.setItems(FXCollections.observableArrayList(especialidades));
+                } catch (Exception e) {
+                    System.err.println("Error al cargar especialidades en el formulario: " + e.getMessage());
+                }
+            } else {
+                // Si no es médico, limpiamos
+                cmbEspecialidad.getItems().clear();
+            }
+        }
     }
 
 
@@ -142,6 +176,19 @@ public class FormularioViewController {
 
         cmbRol.setValue(usuarioActual.getRol()); // Esto dispara actualizarCamposDinamicos
         txtInfoExtra.setText(usuarioActual.getInfoExtra()); // Cargar dato específico
+
+        if ("Médico".equals(usuarioActual.getRol()) && dataController != null) {
+            try {
+                // Buscamos al médico en la capa de lógica para obtener su especialidad actual
+                jujava.mediturnos.logica.entidades.Persona p = dataController.getPersonaLogica(Integer.parseInt(usuarioActual.getDni()));
+                if (p instanceof jujava.mediturnos.logica.entidades.Medico) {
+                    String especialidadActual = ((jujava.mediturnos.logica.entidades.Medico) p).getEspecialidad();
+                    cmbEspecialidad.setValue(especialidadActual); // Seleccionamos la especialidad actual
+                }
+            } catch (NumberFormatException e) {
+                System.err.println("Error al parsear DNI en cargarDatosParaModificacion: " + e.getMessage());
+            }
+        }
         txtPassword.clear(); // Limpiar campos de contraseña en modificación
         txtConfirmarPassword.clear();
     }
@@ -157,6 +204,15 @@ public class FormularioViewController {
         String telefono = txtTelefono.getText();
         String password = txtPassword.getText();
         String confirmarPassword = txtConfirmarPassword.getText();
+
+        String especialidad = null;
+        if ("Médico".equals(rol)) {
+            especialidad = cmbEspecialidad.getValue();
+            if (especialidad == null || especialidad.trim().isEmpty()) {
+                dataController.showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Error", "Debe seleccionar una especialidad para el médico.");
+                return;
+            }
+        }
 
         Usuario usuarioParaGuardar;
         String passwordAGuardar = null;

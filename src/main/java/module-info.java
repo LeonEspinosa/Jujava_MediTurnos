@@ -2,12 +2,14 @@
 module jujava.mediturnos {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.graphics;
 
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires jbcrypt;
+    requires java.base;
 
     // 🔹 Abre los paquetes de presentación para que JavaFX (via FXML) pueda acceder a ellos.
     opens jujava.mediturnos.presentacion.vista to javafx.fxml;
@@ -24,5 +26,6 @@ module jujava.mediturnos {
     // 🔹 Exporta los paquetes de lógica y datos para que la capa de presentación pueda usarlos
     exports jujava.mediturnos.logica;
     exports jujava.mediturnos.datos;
+    exports jujava.mediturnos.logica.entidades;
 }
 
