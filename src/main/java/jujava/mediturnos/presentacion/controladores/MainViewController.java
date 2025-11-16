@@ -21,6 +21,7 @@ import java.io.IOException;
 
 public class MainViewController {
 
+    @FXML private Button btnReportes;
     @FXML
     private BorderPane contentArea;
     @FXML
@@ -137,6 +138,11 @@ public class MainViewController {
     }
 
     @FXML
+    public void handleReportes() {
+        loadView("reportes-view.fxml", null);
+    }
+    
+    @FXML
     public void handleSolicitarTurno() {
         if (usuarioLogueado instanceof Paciente) {
             loadView("solicitar-turno-view.fxml",(Usuario) null);
@@ -178,7 +184,10 @@ public class MainViewController {
             } else if (fxmlFile.equals("gestionar-turnos-view.fxml") && usuarioLogueado instanceof Administrador) {
                 GestionarTurnosViewController controller = loader.getController();
                 controller.initData(dataController, this);
-            } else if (fxmlFile.equals("gestionar-especialidades-view.fxml") && usuarioLogueado instanceof Administrador) {
+            }else if (fxmlFile.equals("reportes-view.fxml")) {
+                ReportesViewController controller = loader.getController();
+                controller.initData(dataController);
+            }else if (fxmlFile.equals("gestionar-especialidades-view.fxml") && usuarioLogueado instanceof Administrador) {
                 // Llama al initData del nuevo controlador
                 GestionarEspecialidadesViewController controller = loader.getController();
                 controller.initData(dataController, this);
