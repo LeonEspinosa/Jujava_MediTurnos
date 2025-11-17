@@ -209,6 +209,11 @@ public class ReportesViewController {
 
    @FXML
 private void handleExportarExcel() {
+    if (datosPorEspecialidad == null || datosPorMedico == null || datosPorEstado == null || datosPorObraSocial == null) {
+        dataController.showAlert(Alert.AlertType.WARNING, "Exportación no disponible", "Primero generá el reporte antes de exportar.");
+        return;
+    }
+
     try {
         ServicioExportacion.exportarEstadisticasAExcel(
             dtpFechaInicio.getValue(),
