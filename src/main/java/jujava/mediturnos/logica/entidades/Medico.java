@@ -1,5 +1,4 @@
 package jujava.mediturnos.logica.entidades;
-//solo puedo yo
 import jujava.mediturnos.datos.AccesoDatos;
 
 public class Medico extends Persona {
