@@ -40,8 +40,6 @@ public class ServicioExportacion {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivo Excel (*.xlsx)", "*.xlsx"));
         fileChooser.setInitialFileName("Reporte_MediTurnos_" + LocalDate.now().toString() + ".xlsx");
 
-        // 2. Mostrar el diálogo y obtener el archivo seleccionado por el usuario
-        // Usamos la 'ventana' pasada como parámetro para que el diálogo sea modal.
         File archivo = fileChooser.showSaveDialog(ventana);
 
         // 3. Si el usuario seleccionó un archivo (no presionó "Cancelar")

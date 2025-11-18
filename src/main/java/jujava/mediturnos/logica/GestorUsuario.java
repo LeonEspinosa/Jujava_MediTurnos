@@ -5,6 +5,7 @@ import jujava.mediturnos.logica.entidades.Persona;
 import jujava.mediturnos.logica.entidades.Medico;
 import jujava.mediturnos.logica.entidades.Administrador;
 import jujava.mediturnos.logica.entidades.Paciente;
+import jujava.mediturnos.logica.entidades.Turno;
 import java.util.ArrayList;
 import java.util.List;
 import org.mindrot.jbcrypt.BCrypt;
@@ -36,21 +37,19 @@ public class GestorUsuario {
 
     public boolean validarDNIUnico(String dniStr) {
         if (dniStr == null || dniStr.trim().isEmpty()) {
-            System.out.println("Error. El campo DNI está vacío.");
             return false;
         }
         int dni;
         try {
             dni = Integer.parseInt(dniStr.trim());
         } catch (NumberFormatException e) {
-            System.out.println("Error. El DNI debe ser un número entero positivo.");
+            e.printStackTrace();
             return false;
         }
         if (dni == 0 || dni == 1 || dni == 2) {
             Persona usuarioExistente = buscarUsuarioPorDNI(dni);
             // Solo es un problema si el usuario ya existe (que debería)
             if (usuarioExistente != null) {
-                System.out.println("Error. El DNI " + dni + " está reservado para usuarios de prueba.");
                 return false;
             }
         }
@@ -81,7 +80,6 @@ public class GestorUsuario {
         Persona usuario = buscarUsuarioPorDNI(DNI);
         if (usuario != null) {
             if (DNI == 0 || DNI == 1 || DNI == 2) {
-                System.err.println("Error: No se pueden eliminar los usuarios de prueba por defecto (DNI 0, 1, 2).");
                 return;
             }
             if (usuario instanceof Paciente) {
@@ -109,7 +107,7 @@ public class GestorUsuario {
             p.setPasswordHash(hashGuardado); //linea q agregue CONSULTARR
             pacientes.add(p);
             AccesoDatos.guardarPacientes(pacientes);
-        } else System.out.println("DNI ya existente.");
+        }
     }
 
 
@@ -120,8 +118,6 @@ public class GestorUsuario {
             m.setPasswordHash(hash);
             medicos.add(m);
             AccesoDatos.guardarMedicos(medicos);
-        } else {
-            System.out.println("DNI ya existente.");
         }
     }
 
@@ -133,8 +129,6 @@ public class GestorUsuario {
             a.setPasswordHash(hash);
             administradores.add(a);
             AccesoDatos.guardarAdministradores(administradores);
-        } else {
-            System.out.println("DNI ya existente.");
         }
     }
 
@@ -184,7 +178,6 @@ public class GestorUsuario {
         }
         String hashGuardado = usuario.getPasswordHash();
         if (hashGuardado == null || hashGuardado.isEmpty()) {
-            System.err.println("Error: El usuario DNI " + dni + " no tiene una contraseña (hash) almacenada.");
             return null;
         }
         if (BCrypt.checkpw(passwordIngresada, hashGuardado)) {
@@ -197,27 +190,23 @@ public class GestorUsuario {
 
     public boolean modificarPasswordUsuario(int DNI, String nuevaPassword) {
         if (nuevaPassword == null || nuevaPassword.trim().isEmpty()) {
-            System.err.println("Error modificar contraseña: La nueva contraseña no puede estar vacía.");
             return false;
         }
         if (DNI == 0 && nuevaPassword.length() < 4) {
-            System.err.println("Error modificar contraseña: La contraseña del admin por defecto debe tener al menos 4 caracteres.");
             return false;
         }
 
         Persona usuario = buscarUsuarioPorDNI(DNI);
         if (usuario == null) {
-            System.err.println("Error modificar contraseña: Usuario con DNI " + DNI + " no encontrado.");
             return false;
         }
 
         try {
             // Generar el nuevo hash
             String nuevoHash = BCrypt.hashpw(nuevaPassword.trim(), BCrypt.gensalt());
-            // Actualizar el hash en el objeto Persona
             usuario.setPasswordHash(nuevoHash);
 
-            // Guardar en el archivo CSV
+            // Guardar
             boolean guardado = false;
             if (usuario instanceof Paciente) {
                 AccesoDatos.guardarPacientes(pacientes);
@@ -231,15 +220,12 @@ public class GestorUsuario {
             }
 
             if(guardado) {
-                System.out.println("Contraseña actualizada para DNI: " + DNI);
                 return true;
             } else {
-                System.err.println("Error modificar contraseña: No se pudo determinar el tipo de usuario para guardar DNI: " + DNI);
                 return false;
             }
 
         } catch (Exception e) {
-            System.err.println("Error al hashear o guardar la nueva contraseña para DNI " + DNI + ": " + e.getMessage());
             e.printStackTrace();
             return false;
         }

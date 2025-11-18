@@ -28,6 +28,9 @@ public class GestorTurnos {
     public GestorTurnos(GestorUsuario gestorUsuario) {
         this.gestorUsuario = gestorUsuario;
         this.turnos = AccesoDatos.cargarTurnos();
+
+        InicializadorDatos.verificarYPoblarTurnos(this.turnos);
+
         this.especialidades = AccesoDatos.cargarEspecialidades();
         InicializadorDatos.verificarYPoblarEspecialidades(this.especialidades);
     }
@@ -47,11 +50,9 @@ public class GestorTurnos {
 
     public boolean solicitarTurno(int dniPaciente, int dniMedico, String especialidad, LocalDateTime fechaHora) {
         if (fechaHora == null || fechaHora.isBefore(LocalDateTime.now())) {
-            System.err.println("Error: La fecha/hora es inválida.");
             return false;
         }
         if (gestorUsuario.buscarMedicoPorDNI(dniMedico) == null) {
-            System.err.println("Error: Médico con DNI " + dniMedico + " no encontrado.");
             return false;
         }
 
@@ -109,7 +110,6 @@ public class GestorTurnos {
 
         // La nueva fecha no debe ser pasada, a menos que se quiera marcar como Realizado
         if (fechaHora.isBefore(LocalDateTime.now()) && !"Realizado".equals(estado)) {
-            System.err.println("Error: No se puede asignar un turno en el pasado (excepto si se marca como Realizado).");
             return false;
         }
 
@@ -184,7 +184,6 @@ public class GestorTurnos {
                 .filter(filtrarPorFechas(fechaInicio, fechaFin))
                 .collect(Collectors.groupingBy(t -> {
                     Paciente p = gestorUsuario.buscarPacientePorDNI(t.getDniPaciente());
-                    // Asegúrate de que Paciente.getObraSocial() no sea null si el paciente no tiene OS en el CSV
                     return (p != null && p.getObraSocial() != null && !p.getObraSocial().trim().isEmpty()) ? p.getObraSocial() : "Sin Obra Social";
                 }, Collectors.counting()));
     }
@@ -200,9 +199,9 @@ public class GestorTurnos {
         for (Turno t : turnos) {
             if (t.getDniMedico() == dniMedico &&
                     t.getFechaHora().equals(fechaHora) &&
-                    t.getEstado().equalsIgnoreCase("pendiente")) {
-                return false;}}//horario no disponible
-        return true;} // horario disponible
+                    t.getEstado().equalsIgnoreCase("pendiente")) { // <-- EL PROBLEMA
+                return false;}}
+        return true;}
 
 
     //MODIFICAR TURNO
@@ -212,7 +211,6 @@ public class GestorTurnos {
             System.out.println("turno no encontrado");
             return;}
 
-        //valida que el paciente exista
         GestorUsuario gestor= new GestorUsuario();
         Paciente paciente = gestor.buscarPacientePorDNI(turnoModificado.getDniPaciente());
         if (paciente == null) {
@@ -224,7 +222,6 @@ public class GestorTurnos {
             System.out.println("el medico ya tiene un turno en ese horario");
             return;}
 
-        // aplica las modificaciones
         turnoOriginal.setDniPaciente(turnoModificado.getDniPaciente());
         turnoOriginal.setDniMedico(turnoModificado.getDniMedico());
         turnoOriginal.setEspecialidad(turnoModificado.getEspecialidad());
@@ -236,13 +233,11 @@ public class GestorTurnos {
 
     public boolean agregarEspecialidad(String nuevaEspecialidad) {
         if (nuevaEspecialidad == null || nuevaEspecialidad.trim().isEmpty()) {
-            System.err.println("Error: El nombre de la especialidad no puede estar vacío.");
             return false;
         }
 
         String especialidadLimpia = nuevaEspecialidad.trim();
 
-        // Buscamos si ya existe (ignorando mayúsculas/minúsculas)
         boolean yaExiste = especialidades.stream()
                 .anyMatch(e -> e.equalsIgnoreCase(especialidadLimpia));
 
@@ -251,7 +246,6 @@ public class GestorTurnos {
             return false;
         }
 
-        // Si no existe, la agregamos
         this.especialidades.add(especialidadLimpia);
         AccesoDatos.guardarEspecialidades(this.especialidades);
         System.out.println("Especialidad '" + especialidadLimpia + "' agregada.");
@@ -268,11 +262,9 @@ public class GestorTurnos {
                 .anyMatch(medico -> medico.getEspecialidad().equalsIgnoreCase(especialidadAEliminar));
 
         if (enUso) {
-            System.err.println("Error: No se puede eliminar la especialidad '" + especialidadAEliminar + "' porque está asignada a uno o más médicos.");
             return false;
         }
 
-        // 2. Si no está en uso, intentamos eliminarla de la lista
         boolean eliminado = this.especialidades.removeIf(e -> e.equalsIgnoreCase(especialidadAEliminar));
 
         if (eliminado) {
@@ -311,11 +303,10 @@ public class GestorTurnos {
 
     public Map<String, Long> getEstadisticasPorMedico(LocalDate fechaInicio, LocalDate fechaFin) {
 
-        // Filtro igual que el anterior
         LocalDateTime inicio = (fechaInicio != null) ? fechaInicio.atStartOfDay() : LocalDateTime.MIN;
         LocalDateTime fin = (fechaFin != null) ? fechaFin.atTime(23, 59, 59) : LocalDateTime.MAX;
 
-        // Primero: agrupar por DNI
+        // Agrupar por DNI
         Map<Integer, Long> conteoPorDni = turnos.stream()
                 .filter(t -> {
                     // Si no hay fechas → no usar filtro
@@ -330,7 +321,7 @@ public class GestorTurnos {
                         Collectors.counting()
                 ));
 
-        // Segundo: convertir DNI → "Nombre Apellido"
+        // Convertir DNI a "Nombre Apellido"
         return conteoPorDni.entrySet().stream()
                 .collect(Collectors.toMap(
                         e -> {

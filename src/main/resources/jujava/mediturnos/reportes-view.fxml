@@ -29,10 +29,12 @@
 
         <HBox alignment="CENTER_LEFT" spacing="30.0">
             <children>
-                <Label styleClass="menu-header" text="Tasa de Asistencia:" />
+                <Label styleClass="view-header" text="Tasa de Asistencia:" />
+
                 <Label fx:id="lblTasaAsistencia" text="N/A" styleClass="reporte-asistencia" />
 
-                <Label styleClass="menu-header" text="Tasa de Cancelación:" />
+                <Label styleClass="view-header" text="Tasa de Cancelación:" />
+
                 <Label fx:id="lblTasaCancelacion" text="N/A" styleClass="reporte-cancelacion" />
             </children>
             <padding>
@@ -53,7 +55,7 @@
 
             <children>
                 <VBox spacing="5.0" GridPane.columnIndex="0">
-                    <Label text="Por Especialidad" styleClass="menu-header"/>
+                    <Label text="Por Especialidad" styleClass="view-header"/>
                     <TableView fx:id="tblEspecialidad" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn fx:id="colEspecialidadDesc" prefWidth="100.0" text="Especialidad" />
@@ -64,7 +66,7 @@
                 </VBox>
 
                 <VBox spacing="5.0" GridPane.columnIndex="1">
-                    <Label text="Por Médico" styleClass="menu-header"/>
+                    <Label text="Por Médico" styleClass="view-header"/>
                     <TableView fx:id="tblMedico" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn fx:id="colMedicoDesc" prefWidth="100.0" text="Médico" />
@@ -75,7 +77,7 @@
                 </VBox>
 
                 <VBox spacing="5.0" GridPane.columnIndex="2">
-                    <Label text="Por Estado" styleClass="menu-header"/>
+                    <Label text="Por Estado" styleClass="view-header"/>
                     <TableView fx:id="tblEstado" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn fx:id="colEstadoDesc" prefWidth="100.0" text="Estado" />
@@ -86,7 +88,7 @@
                 </VBox>
 
                 <VBox spacing="5.0" GridPane.columnIndex="3">
-                    <Label text="Por Obra Social" styleClass="menu-header"/>
+                    <Label text="Por Obra Social" styleClass="view-header"/>
                     <TableView fx:id="tblObraSocial" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn fx:id="colObraSocialDesc" prefWidth="100.0" text="Obra Social" />
