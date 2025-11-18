@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import java.time.LocalDate;
+import java.util.Map;
+
 public class MainController {
 
     private final GestorUsuario gestorUsuario;
@@ -223,7 +226,7 @@ public class MainController {
                 // --- 1. MODIFICAR CONTRASEÑA (SI SE PROPORCIONÓ) ---
 
                 if (password != null && !password.isEmpty()) {
-                    // Llama al método específico en GestorUsuario para cambiar SÓLO la contraseña
+                    // Llama al metodo específico en GestorUsuario para cambiar SÓLO la contraseña
                     passwordModificada = gestorUsuario.modificarPasswordUsuario(dniInt, password);
                     if(!passwordModificada){
                         // Podríamos mostrar una advertencia si falló, pero GestorUsuario ya loguea el error
@@ -496,8 +499,22 @@ public class MainController {
         return gestorTurno.completarTurno(idTurno);
     }
 
+    // --- NUEVOS MÉTODOS PARA REPORTES ---
+    public Map<String, Long> getTurnosPorEspecialidad(LocalDate fechaInicio, LocalDate fechaFin) {
+        return gestorTurno.getTurnosPorEspecialidad(fechaInicio, fechaFin);
+    }
 
+    public Map<String, Long> getTurnosPorMedicoReporte(LocalDate fechaInicio, LocalDate fechaFin) {
+        return gestorTurno.getTurnosPorMedicoReporte(fechaInicio, fechaFin);
+    }
 
+    public Map<String, Long> getTurnosPorEstado(LocalDate fechaInicio, LocalDate fechaFin) {
+        return gestorTurno.getTurnosPorEstado(fechaInicio, fechaFin);
+    }
+
+    public Map<String, Long> getTurnosPorObraSocial(LocalDate fechaInicio, LocalDate fechaFin) {
+        return gestorTurno.getTurnosPorObraSocial(fechaInicio, fechaFin);
+    }
     // --- Métodos de UI (Helpers) ---
     public void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);

@@ -26,6 +26,7 @@
                 <VBox fx:id="menuUsuarioAdmin" spacing="10.0" managed="false" visible="false">
                     <Label styleClass="menu-header" text="Gestión de Turnos (Admin)" />
                     <Button fx:id="btnGestionarTurnos" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleGestionarTurnos" styleClass="menu-button" text="Gestionar Turnos" />
+                    <Button fx:id="btnReportes" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleReportes" styleClass="menu-button" text="Reportes y Stats" />
                     <Button fx:id="btnGestionarEspecialidades" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleGestionarEspecialidades" styleClass="menu-button" text="Gestionar Especialidades" />
                     <padding>
                         <Insets top="5.0" />
