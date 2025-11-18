@@ -15,6 +15,11 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import java.time.LocalDate;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 public class GestorTurnos {
     private List<Turno> turnos;
     private final GestorUsuario gestorUsuario;
@@ -134,6 +139,54 @@ public class GestorTurnos {
         return gestorUsuario.getMedicos().stream()
                 .filter(m -> especialidad.equalsIgnoreCase(m.getEspecialidad()))
                 .collect(Collectors.toList());
+    }
+
+    //Predicado auxiliar para filtrar turnos por rango de fecha
+    private Predicate<Turno> filtrarPorFechas(LocalDate fechaInicio, LocalDate fechaFin) {
+        return t -> {
+            if (t.getFechaHora() == null) return false;
+            LocalDate fechaTurno = t.getFechaHora().toLocalDate();
+
+            boolean inicioValido = fechaInicio == null || !fechaTurno.isBefore(fechaInicio);
+            boolean finValido = fechaFin == null || !fechaTurno.isAfter(fechaFin);
+
+            return inicioValido && finValido;
+        };
+    }
+
+    //Obtiene estadísticas de turnos x Especialidad, filtrando por rango de fechas
+    public Map<String, Long> getTurnosPorEspecialidad(LocalDate fechaInicio, LocalDate fechaFin) {
+        return this.turnos.stream()
+                .filter(filtrarPorFechas(fechaInicio, fechaFin))
+                .collect(Collectors.groupingBy(Turno::getEspecialidad, Collectors.counting()));
+    }
+
+    //Obtiene estadísticas de turnos por Médico (Nombre + DNI), filtrando por rango de fechas
+    public Map<String, Long> getTurnosPorMedicoReporte(LocalDate fechaInicio, LocalDate fechaFin) {
+        return this.turnos.stream()
+                .filter(filtrarPorFechas(fechaInicio, fechaFin))
+                .collect(Collectors.groupingBy(t -> {
+                    Medico m = gestorUsuario.buscarMedicoPorDNI(t.getDniMedico());
+                    return m != null ? m.getNombre() + " " + m.getApellido() + " (" + t.getDniMedico() + ")" : "Médico no encontrado (" + t.getDniMedico() + ")";
+                }, Collectors.counting()));
+    }
+
+    //Obtiene estadísticas de turnos por Estado, filtrando por rango de fechas
+    public Map<String, Long> getTurnosPorEstado(LocalDate fechaInicio, LocalDate fechaFin) {
+        return this.turnos.stream()
+                .filter(filtrarPorFechas(fechaInicio, fechaFin))
+                .collect(Collectors.groupingBy(Turno::getEstado, Collectors.counting()));
+    }
+
+    //Obtiene estadísticas de turnos por Obra Social, filtrando por rango de fechas
+    public Map<String, Long> getTurnosPorObraSocial(LocalDate fechaInicio, LocalDate fechaFin) {
+        return this.turnos.stream()
+                .filter(filtrarPorFechas(fechaInicio, fechaFin))
+                .collect(Collectors.groupingBy(t -> {
+                    Paciente p = gestorUsuario.buscarPacientePorDNI(t.getDniPaciente());
+                    // Asegúrate de que Paciente.getObraSocial() no sea null si el paciente no tiene OS en el CSV
+                    return (p != null && p.getObraSocial() != null && !p.getObraSocial().trim().isEmpty()) ? p.getObraSocial() : "Sin Obra Social";
+                }, Collectors.counting()));
     }
 
     //BUSCAR TURNO

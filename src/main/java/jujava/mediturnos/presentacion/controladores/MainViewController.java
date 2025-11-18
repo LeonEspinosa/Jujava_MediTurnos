@@ -52,7 +52,7 @@ public class MainViewController {
     }
 
     /**
-     * Método principal que se llama al iniciar sesión.
+     * Metodo principal que se llama al iniciar sesión.
      * Configura menús y carga la vista por defecto según el rol.
      */
     public void iniciarAplicacionPrincipal(Persona usuario) {
@@ -157,6 +157,13 @@ public class MainViewController {
         }
     }
 
+    @FXML
+    public void handleReportes() {
+        if (usuarioLogueado instanceof Administrador) {
+            loadView("reportes-view.fxml",(Usuario) null);
+        }
+    }
+
     public void loadView(String fxmlFile, Usuario usuario) {
         try {
             FXMLLoader loader = new FXMLLoader();
@@ -181,6 +188,9 @@ public class MainViewController {
             } else if (fxmlFile.equals("gestionar-especialidades-view.fxml") && usuarioLogueado instanceof Administrador) {
                 // Llama al initData del nuevo controlador
                 GestionarEspecialidadesViewController controller = loader.getController();
+                controller.initData(dataController, this);
+            } else if (fxmlFile.equals("reportes-view.fxml") && usuarioLogueado instanceof Administrador) {
+                ReportesViewController controller = loader.getController();
                 controller.initData(dataController, this);
             }
 
