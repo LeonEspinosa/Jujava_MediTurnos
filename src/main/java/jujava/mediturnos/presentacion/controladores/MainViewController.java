@@ -16,11 +16,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.Button;
 
 import java.io.IOException;
 
 public class MainViewController {
 
+    @FXML private Button btnReportes;
     @FXML
     private BorderPane contentArea;
     @FXML

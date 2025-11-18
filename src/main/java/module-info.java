@@ -10,6 +10,8 @@ module jujava.mediturnos {
     requires org.kordamp.bootstrapfx.core;
     requires jbcrypt;
     requires java.base;
+    requires org.apache.poi.poi;
+    requires org.apache.poi.ooxml;
 
     // 🔹 Abre los paquetes de presentación para que JavaFX (via FXML) pueda acceder a ellos.
     opens jujava.mediturnos.presentacion.vista to javafx.fxml;

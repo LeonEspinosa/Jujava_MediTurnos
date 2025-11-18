@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import jujava.mediturnos.logica.ServicioExportacion;
 
 public class ReportesViewController {
 
@@ -171,23 +172,37 @@ public class ReportesViewController {
         lblTasaCancelacion.setText(String.format("%.2f%%", tasaCancelacion));
     }
 
-
     @FXML
     private void handleExportarExcel() {
-        // Logica de exportacion
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Exportar Reporte a Excel");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos Excel (*.xlsx)", "*.xlsx"));
-        fileChooser.setInitialFileName("Reporte_MediTurnos_" + LocalDate.now().toString() + ".xlsx");
+        // 1. Verificar que los datos existan (de rama_brisa)
+        if (datosPorEspecialidad == null || datosPorMedico == null || datosPorEstado == null || datosPorObraSocial == null) {
+            dataController.showAlert(Alert.AlertType.WARNING, "Exportación no disponible", "Primero debe generar el reporte antes de exportar.");
+            return;
+        }
 
-        // Obtenemos el Stage actual para mostrar el dialogo
+        // 2. Obtener la ventana actual (de rama_Leom)
         Stage stage = (Stage) btnExportarExcel.getScene().getWindow();
-        File file = fileChooser.showSaveDialog(stage);
 
-        if (file != null) {
-            // En una implementación real, aqu se usaría Apache POI o alguna librería para escribir el Excel.
-            // Se asume que dataController tiene un metodo para manejar la exportación con los Map ya guardados.
-            dataController.showAlert(Alert.AlertType.INFORMATION, "Exportación Pendiente", "Se simularía la exportación a Excel en el archivo:\n" + file.getAbsolutePath());
+        try {
+            // 3. Llamar al servicio que creamos (de rama_brisa, modificado)
+            ServicioExportacion.exportarEstadisticasAExcel(
+                    stage, // <-- Le pasamos la ventana
+                    dtpFechaInicio.getValue(),
+                    dtpFechaFin.getValue(),
+                    datosPorEspecialidad,
+                    datosPorMedico,
+                    datosPorEstado,
+                    datosPorObraSocial
+            );
+
+            // 4. Notificar éxito (de rama_brisa)
+            dataController.showAlert(Alert.AlertType.INFORMATION, "Exportación Exitosa", "El reporte fue exportado correctamente.");
+
+        } catch (Exception e) {
+            // 5. Manejar errores (de rama_brisa)
+            e.printStackTrace();
+            dataController.showAlert(Alert.AlertType.ERROR, "Error de Exportación", "Ocurrió un error al intentar guardar el archivo Excel.");
         }
     }
+
 }
