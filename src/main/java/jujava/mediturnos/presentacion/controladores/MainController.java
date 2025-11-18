@@ -15,9 +15,11 @@ import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -45,6 +47,21 @@ public class MainController {
             throw new RuntimeException("No se pudo inicializar el controlador principal.", e);
         }
 
+    }
+    public Map<String, Long> getEstadisticasPorEspecialidad(LocalDate inicio, LocalDate fin) {
+        return gestorTurno.getEstadisticasPorEspecialidad(inicio, fin);
+    }
+
+    public Map<String, Long> getEstadisticasPorMedico(LocalDate inicio, LocalDate fin) {
+        return gestorTurno.getEstadisticasPorMedico(inicio, fin);
+    }
+
+    public Map<String, Long> getEstadisticasPorEstado(LocalDate inicio, LocalDate fin) {
+        return gestorTurno.getEstadisticasPorEstado(inicio, fin);
+    }
+
+    public Map<String, Long> getEstadisticasPorObraSocial(LocalDate inicio, LocalDate fin) {
+        return gestorTurno.getEstadisticasPorObraSocial(inicio, fin);
     }
 
     private void cargarDatosDeLogica() {

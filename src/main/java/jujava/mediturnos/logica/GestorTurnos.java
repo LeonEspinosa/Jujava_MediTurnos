@@ -10,6 +10,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class GestorTurnos {
     private List<Turno> turnos;
@@ -227,6 +231,123 @@ public class GestorTurnos {
 
         return eliminado;
     }
+    public Map<String, Long> getEstadisticasPorEspecialidad(LocalDate fechaInicio, LocalDate fechaFin) {
 
+        if (fechaInicio == null && fechaFin == null) {
+            return turnos.stream()
+                    .collect(Collectors.groupingBy(
+                            Turno::getEspecialidad,
+                            Collectors.counting()
+                    ));
+        }
+
+        LocalDateTime inicio = (fechaInicio != null) ? fechaInicio.atStartOfDay() : LocalDateTime.MIN;
+        LocalDateTime fin = (fechaFin != null) ? fechaFin.atTime(23, 59, 59) : LocalDateTime.MAX;
+
+        return turnos.stream()
+                .filter(t -> {
+                    LocalDateTime fh = t.getFechaHora();
+                    return (fh.isEqual(inicio) || fh.isAfter(inicio)) &&
+                            (fh.isEqual(fin) || fh.isBefore(fin));
+                })
+                .collect(Collectors.groupingBy(
+                        Turno::getEspecialidad,
+                        Collectors.counting()
+                ));
+    }
+
+    public Map<String, Long> getEstadisticasPorMedico(LocalDate fechaInicio, LocalDate fechaFin) {
+
+        // Filtro igual que el anterior
+        LocalDateTime inicio = (fechaInicio != null) ? fechaInicio.atStartOfDay() : LocalDateTime.MIN;
+        LocalDateTime fin = (fechaFin != null) ? fechaFin.atTime(23, 59, 59) : LocalDateTime.MAX;
+
+        // Primero: agrupar por DNI
+        Map<Integer, Long> conteoPorDni = turnos.stream()
+                .filter(t -> {
+                    // Si no hay fechas → no usar filtro
+                    if (fechaInicio == null && fechaFin == null) return true;
+
+                    LocalDateTime fh = t.getFechaHora();
+                    return (fh.isEqual(inicio) || fh.isAfter(inicio)) &&
+                            (fh.isEqual(fin) || fh.isBefore(fin));
+                })
+                .collect(Collectors.groupingBy(
+                        Turno::getDniMedico,
+                        Collectors.counting()
+                ));
+
+        // Segundo: convertir DNI → "Nombre Apellido"
+        return conteoPorDni.entrySet().stream()
+                .collect(Collectors.toMap(
+                        e -> {
+                            var medico = gestorUsuario.buscarMedicoPorDNI(e.getKey());
+                            if (medico == null) return "Médico desconocido (" + e.getKey() + ")";
+                            return medico.getNombre() + " " + medico.getApellido();
+                        },
+                        Map.Entry::getValue
+                ));
+    }
+    public Map<String, Long> getEstadisticasPorEstado(LocalDate fechaInicio, LocalDate fechaFin) {
+
+        if (fechaInicio == null && fechaFin == null) {
+            return turnos.stream()
+                    .collect(Collectors.groupingBy(
+                            Turno::getEstado,
+                            Collectors.counting()
+                    ));
+        }
+
+        LocalDateTime inicio = (fechaInicio != null) ? fechaInicio.atStartOfDay() : LocalDateTime.MIN;
+        LocalDateTime fin = (fechaFin != null) ? fechaFin.atTime(23, 59, 59) : LocalDateTime.MAX;
+
+        return turnos.stream()
+                .filter(t -> {
+                    LocalDateTime fh = t.getFechaHora();
+                    return (fh.isEqual(inicio) || fh.isAfter(inicio)) &&
+                            (fh.isEqual(fin) || fh.isBefore(fin));
+                })
+                .collect(Collectors.groupingBy(
+                        Turno::getEstado,
+                        Collectors.counting()
+                ));
+    }
+    public Map<String, Long> getEstadisticasPorObraSocial(LocalDate fechaInicio, LocalDate fechaFin) {
+
+        // Caso sin filtros → contar todos los turnos
+        if (fechaInicio == null && fechaFin == null) {
+            return turnos.stream()
+                    .map(t -> {
+                        Paciente p = gestorUsuario.buscarPacientePorDNI(t.getDniPaciente());
+                        return (p != null) ? p.getObraSocial() : "SIN OBRA SOCIAL";
+                    })
+                    .collect(Collectors.groupingBy(
+                            os -> os,
+                            Collectors.counting()
+                    ));
+        }
+
+        // Convertir LocalDate → LocalDateTime
+        LocalDateTime inicio = (fechaInicio != null) ? fechaInicio.atStartOfDay() : LocalDateTime.MIN;
+        LocalDateTime fin = (fechaFin != null) ? fechaFin.atTime(23, 59, 59) : LocalDateTime.MAX;
+
+        return turnos.stream()
+                // Filtrar por fecha
+                .filter(t -> {
+                    LocalDateTime fh = t.getFechaHora();
+                    return (fh.isEqual(inicio) || fh.isAfter(inicio)) &&
+                            (fh.isEqual(fin) || fh.isBefore(fin));
+                })
+                // Obtener obra social
+                .map(t -> {
+                    Paciente p = gestorUsuario.buscarPacientePorDNI(t.getDniPaciente());
+                    return (p != null) ? p.getObraSocial() : "SIN OBRA SOCIAL";
+                })
+                // Agrupar y contar
+                .collect(Collectors.groupingBy(
+                        os -> os,
+                        Collectors.counting()
+                ));
+    }
 
 }
