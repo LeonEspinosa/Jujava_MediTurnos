@@ -78,6 +78,17 @@
     -fx-background-color: #2980b9;
 }
 
+.button-secondary {
+    -fx-background-color: #27ae60; /* Verde esmeralda */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-padding: 8 15 8 15;
+}
+.button-secondary:hover {
+    -fx-background-color: #219150; /* Un verde un poco más oscuro al pasar el mouse */
+}
+
 /* Botón de Peligro  */
 .button-danger {
     -fx-background-color: #e74c3c; /* Rojo */

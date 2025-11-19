@@ -206,12 +206,13 @@ public class MainController {
         }
 
         int dniInt;
-        int telInt;
+        long telInt;
         char genChar;
         try {
             dniInt = Integer.parseInt(dto.getDni().trim());
 
-            telInt = Integer.parseInt(telefono.trim());
+            //telInt = Integer.parseInt(telefono.trim());
+            telInt = Long.parseLong(telefono.trim());
             if (telInt < 0) throw new NumberFormatException("Teléfono no puede ser negativo.");
 
             // Validar Género (M o F)

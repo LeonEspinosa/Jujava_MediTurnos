@@ -63,7 +63,8 @@ public class AccesoDatos {
                     String apellido = datos[1];
                     int dni = Integer.parseInt(datos[2].trim());
                     char genero = datos[3].trim().charAt(0);
-                    int telefono = Integer.parseInt(datos[4].trim());
+                    //int telefono = Integer.parseInt(datos[4].trim());
+                    long telefono = Long.parseLong(datos[4].trim());
                     String obraSocial = datos[5];
                     String passwordHash = datos[6];
                     lista.add(new Paciente(nombre, apellido, dni, genero, telefono,passwordHash, obraSocial));
@@ -111,7 +112,8 @@ public class AccesoDatos {
                     String apellido = datos[1];
                     int dni = Integer.parseInt(datos[2].trim());
                     char genero = datos[3].trim().charAt(0);
-                    int telefono = Integer.parseInt(datos[4].trim());
+                    //int telefono = Integer.parseInt(datos[4].trim());
+                    long telefono = Long.parseLong(datos[4].trim());
                     String matricula = datos[5];
                     String especialidad = datos[6];
                     String passwordHash = datos[7];
@@ -159,7 +161,8 @@ public class AccesoDatos {
                     String apellido = datos[1];
                     int dni = Integer.parseInt(datos[2].trim());
                     char genero = datos[3].trim().charAt(0);
-                    int telefono = Integer.parseInt(datos[4].trim());
+                    //int telefono = Integer.parseInt(datos[4].trim());
+                    long telefono = Long.parseLong(datos[4].trim());
                     String area = datos[5];
                     String passwordHash = datos[6];
                     lista.add(new Administrador(nombre, apellido, dni, genero, telefono, passwordHash, area));

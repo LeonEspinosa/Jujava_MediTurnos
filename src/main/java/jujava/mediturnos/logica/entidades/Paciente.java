@@ -3,7 +3,7 @@ package jujava.mediturnos.logica.entidades;
 public class Paciente extends Persona {
     private String obraSocial;
 
-    public Paciente( String nombre, String apellido, int dni, char genero, int telefono,String passwordHash, String obraSocial) {
+    public Paciente( String nombre, String apellido, int dni, char genero, long telefono,String passwordHash, String obraSocial) {
         super(nombre, apellido, dni, genero, telefono, passwordHash);
         this.obraSocial = obraSocial;
     }

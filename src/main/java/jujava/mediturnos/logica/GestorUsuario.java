@@ -133,7 +133,7 @@ public class GestorUsuario {
     }
 
 
-    public void modificarPaciente(int DNI, String nombre, String apellido, char genero, int telefono, String obraSocial) {
+    public void modificarPaciente(int DNI, String nombre, String apellido, char genero, long telefono, String obraSocial) {
         Paciente paciente = buscarPacientePorDNI(DNI);
         if (paciente != null) {
             paciente.setNombre(nombre);
@@ -145,7 +145,7 @@ public class GestorUsuario {
         }
     }
 
-    public void modificarMedico(int DNI, String nombre, String apellido, char genero, int telefono, String matricula, String especialidad) {
+    public void modificarMedico(int DNI, String nombre, String apellido, char genero, long telefono, String matricula, String especialidad) {
         Medico medico = buscarMedicoPorDNI(DNI);
         if (medico != null) {
             medico.setNombre(nombre);
@@ -159,7 +159,7 @@ public class GestorUsuario {
     }
 
 
-    public void modificarAdministrador(int DNI, String nombre, String apellido, char genero, int telefono, String area) {
+    public void modificarAdministrador(int DNI, String nombre, String apellido, char genero, long telefono, String area) {
         Persona usuario = buscarUsuarioPorDNI(DNI);
         if (usuario instanceof Administrador administrador) {
             administrador.setNombre(nombre);
