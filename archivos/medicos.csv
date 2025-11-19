@@ -1,3 +1,0 @@
-nombre,apellido,dni,genero,telefono,matricula,especialidad,passwordHash
-Medico,Default,1,F,222222,M-1234,Cardiología,$2a$10$LnKeMNdTpiaZw6Nae2euT.AvD0jJw1ENvUnIsMkqHWZ8w.4tI5UcK
-Juan,Vanegas,48456123,F,222222,M-1234,Cardiología,$2a$10$LnKeMNdTpiaZw6Nae2euT.AvD0jJw1ENvUnIsMkqHWZ8w.4tI5UcK

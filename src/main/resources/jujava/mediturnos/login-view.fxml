@@ -6,6 +6,7 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
 
@@ -28,7 +29,15 @@
                 <PasswordField fx:id="txtPassword" promptText="Ingrese su contraseña" />
             </children>
         </VBox>
-        <Button fx:id="btnLogin" defaultButton="true" mnemonicParsing="false" onAction="#handleLogin" styleClass="button-primary" text="Ingresar" />
+
+        <HBox alignment="CENTER" spacing="10.0">
+            <children>
+                <Button fx:id="btnLogin" defaultButton="true" mnemonicParsing="false" onAction="#handleLogin" styleClass="button-primary" text="Ingresar" />
+
+                <Button fx:id="btnRegistro" mnemonicParsing="false" onAction="#handleRegistro" styleClass="button-secondary" text="Registrarme (Pacientes)" />
+            </children>
+        </HBox>
+
         <Label fx:id="lblError" style="-fx-text-fill: red;" textAlignment="CENTER" wrapText="true" />
     </children>
     <padding>

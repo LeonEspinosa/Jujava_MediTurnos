@@ -81,7 +81,7 @@ public class GestionarTurnosViewController {
         Optional<ButtonType> result = dataController.showConfirmation(
                 "¿Está seguro de que desea cancelar el turno ID "
                         + turnoSeleccionado.getIdTurno()
-                        + " de " + turnoSeleccionado.nombrePacienteProperty() + "?");
+                        + " de " + turnoSeleccionado.nombrePacienteProperty().get() + "?"); // <--- Agregado .get()
 
         if (result.isPresent() && result.get() == ButtonType.OK) {
             boolean exito = dataController.cancelarTurno(turnoSeleccionado.getIdTurno());
@@ -109,7 +109,7 @@ public class GestionarTurnosViewController {
             return;
         }
 
-        // ✔️ CORREGIDO — pasamos null porque el método exige un Usuario
-        navigationController.loadView("formulario-modificar-turno-view.fxml", null);
+        //navigationController.loadView("formulario-modificar-turno-view.fxml", null);
+        navigationController.loadViewModificarTurno(turnoSeleccionado);
     }
 }

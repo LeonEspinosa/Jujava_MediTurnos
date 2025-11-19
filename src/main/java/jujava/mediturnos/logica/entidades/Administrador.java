@@ -10,7 +10,7 @@ public class Administrador extends Persona{
 
     public Administrador() {}
 
-    public Administrador(String nombre, String apellido, int dni, char genero, int telefono,String passwordHash, String area ) {
+    public Administrador(String nombre, String apellido, int dni, char genero, long telefono,String passwordHash, String area ) {
         super(nombre, apellido, dni, genero, telefono, passwordHash);
         this.area = area;}
     public String getArea() {

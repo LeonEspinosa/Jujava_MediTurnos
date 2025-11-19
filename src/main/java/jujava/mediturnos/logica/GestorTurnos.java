@@ -10,6 +10,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import java.time.LocalDate;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class GestorTurnos {
     private List<Turno> turnos;
@@ -19,6 +28,9 @@ public class GestorTurnos {
     public GestorTurnos(GestorUsuario gestorUsuario) {
         this.gestorUsuario = gestorUsuario;
         this.turnos = AccesoDatos.cargarTurnos();
+
+        InicializadorDatos.verificarYPoblarTurnos(this.turnos);
+
         this.especialidades = AccesoDatos.cargarEspecialidades();
         InicializadorDatos.verificarYPoblarEspecialidades(this.especialidades);
     }
@@ -38,11 +50,9 @@ public class GestorTurnos {
 
     public boolean solicitarTurno(int dniPaciente, int dniMedico, String especialidad, LocalDateTime fechaHora) {
         if (fechaHora == null || fechaHora.isBefore(LocalDateTime.now())) {
-            System.err.println("Error: La fecha/hora es inválida.");
             return false;
         }
         if (gestorUsuario.buscarMedicoPorDNI(dniMedico) == null) {
-            System.err.println("Error: Médico con DNI " + dniMedico + " no encontrado.");
             return false;
         }
 
@@ -100,7 +110,6 @@ public class GestorTurnos {
 
         // La nueva fecha no debe ser pasada, a menos que se quiera marcar como Realizado
         if (fechaHora.isBefore(LocalDateTime.now()) && !"Realizado".equals(estado)) {
-            System.err.println("Error: No se puede asignar un turno en el pasado (excepto si se marca como Realizado).");
             return false;
         }
 
@@ -132,6 +141,53 @@ public class GestorTurnos {
                 .collect(Collectors.toList());
     }
 
+    //Predicado auxiliar para filtrar turnos por rango de fecha
+    private Predicate<Turno> filtrarPorFechas(LocalDate fechaInicio, LocalDate fechaFin) {
+        return t -> {
+            if (t.getFechaHora() == null) return false;
+            LocalDate fechaTurno = t.getFechaHora().toLocalDate();
+
+            boolean inicioValido = fechaInicio == null || !fechaTurno.isBefore(fechaInicio);
+            boolean finValido = fechaFin == null || !fechaTurno.isAfter(fechaFin);
+
+            return inicioValido && finValido;
+        };
+    }
+
+    //Obtiene estadísticas de turnos x Especialidad, filtrando por rango de fechas
+    public Map<String, Long> getTurnosPorEspecialidad(LocalDate fechaInicio, LocalDate fechaFin) {
+        return this.turnos.stream()
+                .filter(filtrarPorFechas(fechaInicio, fechaFin))
+                .collect(Collectors.groupingBy(Turno::getEspecialidad, Collectors.counting()));
+    }
+
+    //Obtiene estadísticas de turnos por Médico (Nombre + DNI), filtrando por rango de fechas
+    public Map<String, Long> getTurnosPorMedicoReporte(LocalDate fechaInicio, LocalDate fechaFin) {
+        return this.turnos.stream()
+                .filter(filtrarPorFechas(fechaInicio, fechaFin))
+                .collect(Collectors.groupingBy(t -> {
+                    Medico m = gestorUsuario.buscarMedicoPorDNI(t.getDniMedico());
+                    return m != null ? m.getNombre() + " " + m.getApellido() + " (" + t.getDniMedico() + ")" : "Médico no encontrado (" + t.getDniMedico() + ")";
+                }, Collectors.counting()));
+    }
+
+    //Obtiene estadísticas de turnos por Estado, filtrando por rango de fechas
+    public Map<String, Long> getTurnosPorEstado(LocalDate fechaInicio, LocalDate fechaFin) {
+        return this.turnos.stream()
+                .filter(filtrarPorFechas(fechaInicio, fechaFin))
+                .collect(Collectors.groupingBy(Turno::getEstado, Collectors.counting()));
+    }
+
+    //Obtiene estadísticas de turnos por Obra Social, filtrando por rango de fechas
+    public Map<String, Long> getTurnosPorObraSocial(LocalDate fechaInicio, LocalDate fechaFin) {
+        return this.turnos.stream()
+                .filter(filtrarPorFechas(fechaInicio, fechaFin))
+                .collect(Collectors.groupingBy(t -> {
+                    Paciente p = gestorUsuario.buscarPacientePorDNI(t.getDniPaciente());
+                    return (p != null && p.getObraSocial() != null && !p.getObraSocial().trim().isEmpty()) ? p.getObraSocial() : "Sin Obra Social";
+                }, Collectors.counting()));
+    }
+
     //BUSCAR TURNO
     public Turno buscarTurno(int idTurno) {
         for (Turno t : turnos) {
@@ -143,9 +199,9 @@ public class GestorTurnos {
         for (Turno t : turnos) {
             if (t.getDniMedico() == dniMedico &&
                     t.getFechaHora().equals(fechaHora) &&
-                    t.getEstado().equalsIgnoreCase("pendiente")) {
-                return false;}}//horario no disponible
-        return true;} // horario disponible
+                    t.getEstado().equalsIgnoreCase("pendiente")) { // <-- EL PROBLEMA
+                return false;}}
+        return true;}
 
 
     //MODIFICAR TURNO
@@ -155,7 +211,6 @@ public class GestorTurnos {
             System.out.println("turno no encontrado");
             return;}
 
-        //valida que el paciente exista
         GestorUsuario gestor= new GestorUsuario();
         Paciente paciente = gestor.buscarPacientePorDNI(turnoModificado.getDniPaciente());
         if (paciente == null) {
@@ -167,7 +222,6 @@ public class GestorTurnos {
             System.out.println("el medico ya tiene un turno en ese horario");
             return;}
 
-        // aplica las modificaciones
         turnoOriginal.setDniPaciente(turnoModificado.getDniPaciente());
         turnoOriginal.setDniMedico(turnoModificado.getDniMedico());
         turnoOriginal.setEspecialidad(turnoModificado.getEspecialidad());
@@ -179,13 +233,11 @@ public class GestorTurnos {
 
     public boolean agregarEspecialidad(String nuevaEspecialidad) {
         if (nuevaEspecialidad == null || nuevaEspecialidad.trim().isEmpty()) {
-            System.err.println("Error: El nombre de la especialidad no puede estar vacío.");
             return false;
         }
 
         String especialidadLimpia = nuevaEspecialidad.trim();
 
-        // Buscamos si ya existe (ignorando mayúsculas/minúsculas)
         boolean yaExiste = especialidades.stream()
                 .anyMatch(e -> e.equalsIgnoreCase(especialidadLimpia));
 
@@ -194,7 +246,6 @@ public class GestorTurnos {
             return false;
         }
 
-        // Si no existe, la agregamos
         this.especialidades.add(especialidadLimpia);
         AccesoDatos.guardarEspecialidades(this.especialidades);
         System.out.println("Especialidad '" + especialidadLimpia + "' agregada.");
@@ -211,11 +262,9 @@ public class GestorTurnos {
                 .anyMatch(medico -> medico.getEspecialidad().equalsIgnoreCase(especialidadAEliminar));
 
         if (enUso) {
-            System.err.println("Error: No se puede eliminar la especialidad '" + especialidadAEliminar + "' porque está asignada a uno o más médicos.");
             return false;
         }
 
-        // 2. Si no está en uso, intentamos eliminarla de la lista
         boolean eliminado = this.especialidades.removeIf(e -> e.equalsIgnoreCase(especialidadAEliminar));
 
         if (eliminado) {
@@ -227,6 +276,122 @@ public class GestorTurnos {
 
         return eliminado;
     }
+    public Map<String, Long> getEstadisticasPorEspecialidad(LocalDate fechaInicio, LocalDate fechaFin) {
 
+        if (fechaInicio == null && fechaFin == null) {
+            return turnos.stream()
+                    .collect(Collectors.groupingBy(
+                            Turno::getEspecialidad,
+                            Collectors.counting()
+                    ));
+        }
+
+        LocalDateTime inicio = (fechaInicio != null) ? fechaInicio.atStartOfDay() : LocalDateTime.MIN;
+        LocalDateTime fin = (fechaFin != null) ? fechaFin.atTime(23, 59, 59) : LocalDateTime.MAX;
+
+        return turnos.stream()
+                .filter(t -> {
+                    LocalDateTime fh = t.getFechaHora();
+                    return (fh.isEqual(inicio) || fh.isAfter(inicio)) &&
+                            (fh.isEqual(fin) || fh.isBefore(fin));
+                })
+                .collect(Collectors.groupingBy(
+                        Turno::getEspecialidad,
+                        Collectors.counting()
+                ));
+    }
+
+    public Map<String, Long> getEstadisticasPorMedico(LocalDate fechaInicio, LocalDate fechaFin) {
+
+        LocalDateTime inicio = (fechaInicio != null) ? fechaInicio.atStartOfDay() : LocalDateTime.MIN;
+        LocalDateTime fin = (fechaFin != null) ? fechaFin.atTime(23, 59, 59) : LocalDateTime.MAX;
+
+        // Agrupar por DNI
+        Map<Integer, Long> conteoPorDni = turnos.stream()
+                .filter(t -> {
+                    // Si no hay fechas → no usar filtro
+                    if (fechaInicio == null && fechaFin == null) return true;
+
+                    LocalDateTime fh = t.getFechaHora();
+                    return (fh.isEqual(inicio) || fh.isAfter(inicio)) &&
+                            (fh.isEqual(fin) || fh.isBefore(fin));
+                })
+                .collect(Collectors.groupingBy(
+                        Turno::getDniMedico,
+                        Collectors.counting()
+                ));
+
+        // Convertir DNI a "Nombre Apellido"
+        return conteoPorDni.entrySet().stream()
+                .collect(Collectors.toMap(
+                        e -> {
+                            var medico = gestorUsuario.buscarMedicoPorDNI(e.getKey());
+                            if (medico == null) return "Médico desconocido (" + e.getKey() + ")";
+                            return medico.getNombre() + " " + medico.getApellido();
+                        },
+                        Map.Entry::getValue
+                ));
+    }
+    public Map<String, Long> getEstadisticasPorEstado(LocalDate fechaInicio, LocalDate fechaFin) {
+
+        if (fechaInicio == null && fechaFin == null) {
+            return turnos.stream()
+                    .collect(Collectors.groupingBy(
+                            Turno::getEstado,
+                            Collectors.counting()
+                    ));
+        }
+
+        LocalDateTime inicio = (fechaInicio != null) ? fechaInicio.atStartOfDay() : LocalDateTime.MIN;
+        LocalDateTime fin = (fechaFin != null) ? fechaFin.atTime(23, 59, 59) : LocalDateTime.MAX;
+
+        return turnos.stream()
+                .filter(t -> {
+                    LocalDateTime fh = t.getFechaHora();
+                    return (fh.isEqual(inicio) || fh.isAfter(inicio)) &&
+                            (fh.isEqual(fin) || fh.isBefore(fin));
+                })
+                .collect(Collectors.groupingBy(
+                        Turno::getEstado,
+                        Collectors.counting()
+                ));
+    }
+    public Map<String, Long> getEstadisticasPorObraSocial(LocalDate fechaInicio, LocalDate fechaFin) {
+
+        // Caso sin filtros → contar todos los turnos
+        if (fechaInicio == null && fechaFin == null) {
+            return turnos.stream()
+                    .map(t -> {
+                        Paciente p = gestorUsuario.buscarPacientePorDNI(t.getDniPaciente());
+                        return (p != null) ? p.getObraSocial() : "SIN OBRA SOCIAL";
+                    })
+                    .collect(Collectors.groupingBy(
+                            os -> os,
+                            Collectors.counting()
+                    ));
+        }
+
+        // Convertir LocalDate → LocalDateTime
+        LocalDateTime inicio = (fechaInicio != null) ? fechaInicio.atStartOfDay() : LocalDateTime.MIN;
+        LocalDateTime fin = (fechaFin != null) ? fechaFin.atTime(23, 59, 59) : LocalDateTime.MAX;
+
+        return turnos.stream()
+                // Filtrar por fecha
+                .filter(t -> {
+                    LocalDateTime fh = t.getFechaHora();
+                    return (fh.isEqual(inicio) || fh.isAfter(inicio)) &&
+                            (fh.isEqual(fin) || fh.isBefore(fin));
+                })
+                // Obtener obra social
+                .map(t -> {
+                    Paciente p = gestorUsuario.buscarPacientePorDNI(t.getDniPaciente());
+                    return (p != null) ? p.getObraSocial() : "SIN OBRA SOCIAL";
+                })
+                // Agrupar y contar
+                .collect(Collectors.groupingBy(
+                        os -> os,
+                        Collectors.counting()
+                ));
+    }
 
 }

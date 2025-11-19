@@ -15,11 +15,16 @@ import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import java.time.LocalDate;
+import java.util.Map;
 
 public class MainController {
 
@@ -45,6 +50,21 @@ public class MainController {
             throw new RuntimeException("No se pudo inicializar el controlador principal.", e);
         }
 
+    }
+    public Map<String, Long> getEstadisticasPorEspecialidad(LocalDate inicio, LocalDate fin) {
+        return gestorTurno.getEstadisticasPorEspecialidad(inicio, fin);
+    }
+
+    public Map<String, Long> getEstadisticasPorMedico(LocalDate inicio, LocalDate fin) {
+        return gestorTurno.getEstadisticasPorMedico(inicio, fin);
+    }
+
+    public Map<String, Long> getEstadisticasPorEstado(LocalDate inicio, LocalDate fin) {
+        return gestorTurno.getEstadisticasPorEstado(inicio, fin);
+    }
+
+    public Map<String, Long> getEstadisticasPorObraSocial(LocalDate inicio, LocalDate fin) {
+        return gestorTurno.getEstadisticasPorObraSocial(inicio, fin);
     }
 
     private void cargarDatosDeLogica() {
@@ -186,12 +206,13 @@ public class MainController {
         }
 
         int dniInt;
-        int telInt;
+        long telInt;
         char genChar;
         try {
             dniInt = Integer.parseInt(dto.getDni().trim());
 
-            telInt = Integer.parseInt(telefono.trim());
+            //telInt = Integer.parseInt(telefono.trim());
+            telInt = Long.parseLong(telefono.trim());
             if (telInt < 0) throw new NumberFormatException("Teléfono no puede ser negativo.");
 
             // Validar Género (M o F)
@@ -223,7 +244,7 @@ public class MainController {
                 // --- 1. MODIFICAR CONTRASEÑA (SI SE PROPORCIONÓ) ---
 
                 if (password != null && !password.isEmpty()) {
-                    // Llama al método específico en GestorUsuario para cambiar SÓLO la contraseña
+                    // Llama al metodo específico en GestorUsuario para cambiar SÓLO la contraseña
                     passwordModificada = gestorUsuario.modificarPasswordUsuario(dniInt, password);
                     if(!passwordModificada){
                         // Podríamos mostrar una advertencia si falló, pero GestorUsuario ya loguea el error
@@ -496,8 +517,22 @@ public class MainController {
         return gestorTurno.completarTurno(idTurno);
     }
 
+    // --- NUEVOS MÉTODOS PARA REPORTES ---
+    public Map<String, Long> getTurnosPorEspecialidad(LocalDate fechaInicio, LocalDate fechaFin) {
+        return gestorTurno.getTurnosPorEspecialidad(fechaInicio, fechaFin);
+    }
 
+    public Map<String, Long> getTurnosPorMedicoReporte(LocalDate fechaInicio, LocalDate fechaFin) {
+        return gestorTurno.getTurnosPorMedicoReporte(fechaInicio, fechaFin);
+    }
 
+    public Map<String, Long> getTurnosPorEstado(LocalDate fechaInicio, LocalDate fechaFin) {
+        return gestorTurno.getTurnosPorEstado(fechaInicio, fechaFin);
+    }
+
+    public Map<String, Long> getTurnosPorObraSocial(LocalDate fechaInicio, LocalDate fechaFin) {
+        return gestorTurno.getTurnosPorObraSocial(fechaInicio, fechaFin);
+    }
     // --- Métodos de UI (Helpers) ---
     public void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);

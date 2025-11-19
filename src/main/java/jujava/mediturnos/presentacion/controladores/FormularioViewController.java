@@ -12,6 +12,7 @@ import java.util.List;
 // import javafx.scene.layout.RowConstraints;
 
 import java.util.Arrays;
+import javafx.stage.Stage; // <-- PASO 2.1: AÑADIR IMPORT
 
 public class FormularioViewController {
 
@@ -43,6 +44,8 @@ public class FormularioViewController {
     private Usuario usuarioActual;
     private boolean esModificacion;
 
+    private Stage modalStage; // <-- PASO 2.2: AÑADIR VARIABLE
+
     @FXML
     public void initialize() {
         cmbRol.getItems().addAll(Arrays.asList("Paciente", "Médico", "Administrador"));
@@ -51,16 +54,19 @@ public class FormularioViewController {
         actualizarCamposDinamicos(null);
     }
 
+    /**
+     * Modo 1: Inicializador para el Administrador (EXISTENTE)
+     */
     public void initData(MainController dataController, MainViewController navigationController, Usuario usuario) {
         this.dataController = dataController;
         this.navigationController = navigationController;
         this.usuarioActual = usuario;
+        this.modalStage = null; // No estamos en modo modal
 
         if (usuario == null) {
 
             esModificacion = false;
-            lblTitulo.setText("Formulario de Alta (Registro)");
-
+            lblTitulo.setText("Formulario de Alta (Registro Admin)");
             limpiarCampos();
 
         } else {
@@ -80,6 +86,26 @@ public class FormularioViewController {
         }
     }
 
+    /**
+     * PASO 2.3: AÑADIR NUEVO MÉTODO initData
+     * Modo 2: Inicializador para Auto-Registro de Paciente (NUEVO)
+     */
+    public void initData(MainController dataController, Stage modalStage) {
+        this.dataController = dataController;
+        this.modalStage = modalStage; // Guardamos la ventana modal
+        this.navigationController = null; // No hay navegación
+        this.usuarioActual = null;
+        this.esModificacion = false;
+
+        lblTitulo.setText("Registro de Nuevo Paciente");
+        limpiarCampos();
+
+        // Forzar y bloquear el rol "Paciente"
+        cmbRol.setValue("Paciente");
+        cmbRol.setDisable(true);
+        actualizarCamposDinamicos("Paciente");
+    }
+
     // Método para limpiar campos (útil en Alta)
     private void limpiarCampos() {
         cmbRol.setValue(null);
@@ -97,6 +123,7 @@ public class FormularioViewController {
         }
         txtDni.setEditable(true);
         txtDni.setStyle("");
+        cmbRol.setDisable(false); // Habilitar CmbRol por si estaba deshabilitado
     }
 
     // Método para manejar visibilidad de campos específicos (AHORA INDIVIDUAL)
@@ -146,7 +173,8 @@ public class FormularioViewController {
                     List<String> especialidades = dataController.getEspecialidades();
                     cmbEspecialidad.setItems(FXCollections.observableArrayList(especialidades));
                 } catch (Exception e) {
-                    System.err.println("Error al cargar especialidades en el formulario: " + e.getMessage());
+                    // System.err.println("Error al cargar especialidades en el formulario: " + e.getMessage());
+                    e.printStackTrace();
                 }
             } else {
                 // Si no es médico, limpiamos
@@ -186,7 +214,8 @@ public class FormularioViewController {
                     cmbEspecialidad.setValue(especialidadActual); // Seleccionamos la especialidad actual
                 }
             } catch (NumberFormatException e) {
-                System.err.println("Error al parsear DNI en cargarDatosParaModificacion: " + e.getMessage());
+                // System.err.println("Error al parsear DNI en cargarDatosParaModificacion: " + e.getMessage());
+                e.printStackTrace();
             }
         }
         txtPassword.clear(); // Limpiar campos de contraseña en modificación
@@ -218,7 +247,7 @@ public class FormularioViewController {
         String passwordAGuardar = null;
 
         if (esModificacion) {
-
+            // ... (LÓGICA DE MODIFICACIÓN EXISTENTE - NO CAMBIA) ...
             usuarioParaGuardar = usuarioActual;
             usuarioParaGuardar.setNombre(nombre);
             usuarioParaGuardar.setApellido(apellido);
@@ -269,14 +298,30 @@ public class FormularioViewController {
         // Llamar a MainController pasando la contraseña
         boolean exito = dataController.guardarUsuario(usuarioParaGuardar, genero, telefono, esModificacion, passwordAGuardar);
 
+
+        // --- PASO 2.4: MODIFICAR LÓGICA DE NAVEGACIÓN POST-GUARDADO ---
         if (exito) {
-            navigationController.handleListar();
+            if (navigationController != null) {
+                // Modo Admin: volver a la lista
+                navigationController.handleListar();
+            } else if (modalStage != null) {
+                // Modo Registro: mostrar alerta de éxito y cerrar ventana
+                dataController.showAlert(javafx.scene.control.Alert.AlertType.INFORMATION, "Registro Exitoso", "¡Usuario paciente registrado correctamente! Ya puede iniciar sesión.");
+                modalStage.close();
+            }
         }
     }
 
     @FXML
     private void handleCancelar() {
-        navigationController.handleListar();
+
+        // --- PASO 2.5: MODIFICAR LÓGICA DE CANCELAR ---
+        if (navigationController != null) {
+            // Modo Admin: volver a la lista
+            navigationController.handleListar();
+        } else if (modalStage != null) {
+            // Modo Registro: solo cerrar la ventana
+            modalStage.close();
+        }
     }
 }
-

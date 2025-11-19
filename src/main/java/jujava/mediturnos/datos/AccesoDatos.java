@@ -25,9 +25,6 @@ public class AccesoDatos {
 
         if (directorio != null && !directorio.exists()) {
             if (directorio.mkdirs()) { // .mkdirs() crea todos los directorios necesarios
-                System.out.println(" Directorio de archivos creado: " + directorio.getAbsolutePath());
-            } else {
-                System.err.println(" Error: No se pudo crear el directorio: " + directorio.getAbsolutePath());
             }
         }
     }
@@ -45,16 +42,14 @@ public class AccesoDatos {
                         p.getObraSocial()+","+
                         p.getPasswordHash());
             }
-            System.out.println("Pacientes guardados correctamente.");
         } catch (IOException e) {
-            System.out.println("Error al guardar pacientes: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     public static List<Paciente> cargarPacientes() {
         List<Paciente> lista = new ArrayList<>();
         File archivo = new File(rutaPacientes);
         if (!archivo.exists()) {
-            System.out.println(" No existe el archivo de pacientes. Se devuelve lista vacía.");
             return lista;
         }
         try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
@@ -68,15 +63,15 @@ public class AccesoDatos {
                     String apellido = datos[1];
                     int dni = Integer.parseInt(datos[2].trim());
                     char genero = datos[3].trim().charAt(0);
-                    int telefono = Integer.parseInt(datos[4].trim());
+                    //int telefono = Integer.parseInt(datos[4].trim());
+                    long telefono = Long.parseLong(datos[4].trim());
                     String obraSocial = datos[5];
                     String passwordHash = datos[6];
                     lista.add(new Paciente(nombre, apellido, dni, genero, telefono,passwordHash, obraSocial));
                 }
             }
-            System.out.println("Pacientes cargados correctamente.");
         } catch (IOException | NumberFormatException e) {
-            System.out.println("Error al cargar pacientes: " + e.getMessage());
+            e.printStackTrace();
         }
         return lista;
     }
@@ -96,16 +91,14 @@ public class AccesoDatos {
                         m.getEspecialidad()+ "," +
                         m.getPasswordHash());
             }
-            System.out.println("Médicos guardados correctamente.");
         } catch (IOException e) {
-            System.out.println("Error al guardar médicos: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     public static List<Medico> cargarMedicos() {
         List<Medico> lista = new ArrayList<>();
         File archivo = new File(rutaMedicos);
         if (!archivo.exists()) {
-            System.out.println("No existe el archivo de médicos. Se devuelve lista vacía.");
             return lista;
         }
         try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
@@ -119,19 +112,17 @@ public class AccesoDatos {
                     String apellido = datos[1];
                     int dni = Integer.parseInt(datos[2].trim());
                     char genero = datos[3].trim().charAt(0);
-                    int telefono = Integer.parseInt(datos[4].trim());
+                    //int telefono = Integer.parseInt(datos[4].trim());
+                    long telefono = Long.parseLong(datos[4].trim());
                     String matricula = datos[5];
                     String especialidad = datos[6];
                     String passwordHash = datos[7];
                     lista.add(new Medico(nombre, apellido,dni, genero, telefono,passwordHash, matricula, especialidad));
                 } else {
-
-                    System.err.println("Advertencia: Línea de médico inválida (campos incorrectos): " + linea);
                 }
             }
-            System.out.println("Médicos cargados correctamente.");
         } catch (IOException | NumberFormatException e) {
-            System.out.println(" Error al cargar médicos: " + e.getMessage());
+            e.printStackTrace();
         }
         return lista;
     }
@@ -149,16 +140,14 @@ public class AccesoDatos {
                         a.getArea()+","+
                         a.getPasswordHash());
             }
-            System.out.println("Administradores guardados correctamente.");
         } catch (IOException e) {
-            System.out.println("Error al guardar administradores: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     public static List<Administrador> cargarAdministradores() {
         List<Administrador> lista = new ArrayList<>();
         File archivo = new File(rutaAdministrativos);
         if (!archivo.exists()) {
-            System.out.println("No existe el archivo de administradores. Se devuelve lista vacía.");
             return lista;
         }
         try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
@@ -172,16 +161,16 @@ public class AccesoDatos {
                     String apellido = datos[1];
                     int dni = Integer.parseInt(datos[2].trim());
                     char genero = datos[3].trim().charAt(0);
-                    int telefono = Integer.parseInt(datos[4].trim());
+                    //int telefono = Integer.parseInt(datos[4].trim());
+                    long telefono = Long.parseLong(datos[4].trim());
                     String area = datos[5];
                     String passwordHash = datos[6];
                     lista.add(new Administrador(nombre, apellido, dni, genero, telefono, passwordHash, area));
                 }
 
             }
-            System.out.println("Administradores cargados correctamente.");
         } catch (IOException | NumberFormatException e) {
-            System.out.println(" Error al cargar administradores: " + e.getMessage());
+            e.printStackTrace();
         }
         return lista;
     }
@@ -198,9 +187,8 @@ public class AccesoDatos {
                         t.getFechaHora().format(java.time.format.DateTimeFormatter.ofPattern(FORMATO_FECHA_HORA)) + "," +
                         t.getEstado());
             }
-            System.out.println("Turnos guardados correctamente.");
         } catch (IOException e) {
-            System.out.println("Error al guardar turnos: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -208,7 +196,6 @@ public class AccesoDatos {
         List<Turno> lista = new ArrayList<>();
         File archivo = new File(rutaTurnos);
         if (!archivo.exists()) {
-            System.out.println(" No existe el archivo de turnos. Se devuelve lista vacía.");
             return lista;
         }
         try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
@@ -228,13 +215,12 @@ public class AccesoDatos {
                         String estado = datos[5];
                         lista.add(new Turno(idTurno, dniPaciente, dniMedico, especialidad, fechaHora, estado));
                     } catch (NumberFormatException | java.time.format.DateTimeParseException e) {
-                        System.err.println("Advertencia: Línea de turno inválida: " + linea + ". Error: " + e.getMessage());
+                        e.printStackTrace();
                     }
                 }
             }
-            System.out.println("Turnos cargados correctamente.");
         } catch (IOException e) {
-            System.out.println("Error al cargar turnos: " + e.getMessage());
+            e.printStackTrace();
         }
         return lista;
     }
@@ -244,9 +230,8 @@ public class AccesoDatos {
             for (String especialidad : listaEspecialidades) {
                 pw.println(especialidad);
             }
-            System.out.println("Especialidades guardadas correctamente.");
         } catch (IOException e) {
-            System.out.println("Error al guardar especialidades: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -254,7 +239,6 @@ public class AccesoDatos {
         List<String> lista = new ArrayList<>();
         File archivo = new File(rutaEspecialidades);
         if (!archivo.exists()) {
-            System.out.println(" No existe el archivo de especialidades. Se devuelve lista vacía.");
             return lista;
         }
 
@@ -264,9 +248,8 @@ public class AccesoDatos {
                 if (linea.trim().isEmpty()) continue;
                 lista.add(linea.trim());
             }
-            System.out.println("Especialidades cargadas correctamente.");
         } catch (IOException e) {
-            System.out.println(" Error al cargar especialidades: " + e.getMessage());
+            e.printStackTrace();
         }
 
         return lista;

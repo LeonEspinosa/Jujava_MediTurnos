@@ -26,6 +26,13 @@
     -fx-padding: 5 0 0 0;
 }
 
+.view-header {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000000; /* Negro */
+    -fx-padding: 5 0 0 0;
+}
+
 .menu-button {
     -fx-background-color: transparent;
     -fx-text-fill: #ecf0f1; /* Blanco ligero */
@@ -71,6 +78,17 @@
     -fx-background-color: #2980b9;
 }
 
+.button-secondary {
+    -fx-background-color: #27ae60; /* Verde esmeralda */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-padding: 8 15 8 15;
+}
+.button-secondary:hover {
+    -fx-background-color: #219150; /* Un verde un poco más oscuro al pasar el mouse */
+}
+
 /* Botón de Peligro  */
 .button-danger {
     -fx-background-color: #e74c3c; /* Rojo */
@@ -110,4 +128,17 @@
     -fx-font-size: 13px;
     -fx-font-weight: bold;
     -fx-text-fill: #555;
+}
+/* --- estilos de reportes nuevos --- */
+
+.reporte-asistencia {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #27ae60; /* Verde esmeralda */
+}
+
+.reporte-cancelacion {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e74c3c; /* Rojo */
 }

@@ -6,11 +6,11 @@ public class Persona {
     String nombre;
     String apellido;
     char genero;
-    int telefono;
+    long telefono;
     String passwordHash;
 
     public Persona() {}
-    public Persona(String nombre, String apellido, int dni, char genero, int telefono, String passwordHash) {
+    public Persona(String nombre, String apellido, int dni, char genero, long telefono, String passwordHash) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;
@@ -44,10 +44,10 @@ public class Persona {
     public void setGenero(char genero) {
         this.genero = genero;
     }
-    public int getTelefono() {
+    public long getTelefono() {
         return telefono;
     }
-    public void setTelefono(int telefono) {
+    public void setTelefono(long telefono) {
         this.telefono = telefono;
     }
     public String getPasswordHash() {

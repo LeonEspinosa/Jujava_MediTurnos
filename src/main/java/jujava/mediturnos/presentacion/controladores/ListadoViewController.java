@@ -1,6 +1,5 @@
 package jujava.mediturnos.presentacion.controladores;
 
-// ERROR 34: Importación corregida al DTO de presentación
 import jujava.mediturnos.presentacion.modelos.Usuario;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
