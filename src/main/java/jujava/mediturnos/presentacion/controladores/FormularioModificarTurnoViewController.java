@@ -86,15 +86,26 @@ public class FormularioModificarTurnoViewController {
     }
 
     private void cargarDatosParaModificacion(TurnoModel turno) {
-        // 1. Cargar datos de solo lectura
-        lblIdTurno.setText(String.valueOf(turno.getIdTurno()));
-        lblPaciente.setText(turno.nombrePacienteProperty() + " (DNI: " + turno.getDniPaciente() + ")");
+        // 1. Cargar datos de solo lectura (CORREGIDO)
+
+        // A. Agregamos el prefijo "ID: "
+        lblIdTurno.setText("ID: " + turno.getIdTurno());
+
+        // B. Obtenemos el valor real del nombre usando .get() o el getter correspondiente
+        // C. Formateamos el DNI sin paréntesis como solicitaste
+        String nombreReal = turno.nombrePacienteProperty().get();
+        lblPaciente.setText(nombreReal + " - DNI: " + turno.getDniPaciente());
+
         lblEspecialidad.setText(turno.getEspecialidad());
 
-        // 2. Determinar Fecha y Hora actual (debe parsear el String a LocalDateTime)
-        LocalDateTime ldt = LocalDateTime.parse(turno.getFechaHora(), FORMATTER);
-        dtpFecha.setValue(ldt.toLocalDate());
-        cmbHora.setValue(ldt.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm")));
+        // 2. Determinar Fecha y Hora actual
+        try {
+            LocalDateTime ldt = LocalDateTime.parse(turno.getFechaHora(), FORMATTER);
+            dtpFecha.setValue(ldt.toLocalDate());
+            cmbHora.setValue(ldt.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm")));
+        } catch (Exception e) {
+            System.err.println("Error al parsear fecha en modificación: " + e.getMessage());
+        }
 
         // 3. Cargar estado
         cmbEstado.setValue(turno.getEstado());
@@ -103,10 +114,10 @@ public class FormularioModificarTurnoViewController {
         cargarMedicosPorEspecialidad(turno.getEspecialidad());
 
         // 5. Seleccionar el médico actual
-        String medicoActualStr = turno.nombreMedicoProperty() + " (DNI: " + turno.getDniMedico() + ")";
+        String medicoActualStr = turno.nombreMedicoProperty().get() + " (DNI: " + turno.getDniMedico() + ")";
         cmbMedico.setValue(medicoActualStr);
 
-        // 6. Deshabilitar la edición de estados si el turno ya fue 'Realizado'
+        // 6. Deshabilitar si ya fue realizado
         if ("Realizado".equals(turno.getEstado())) {
             cmbEstado.setDisable(true);
             btnGuardar.setDisable(true);

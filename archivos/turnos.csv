@@ -38,12 +38,12 @@ idTurno,dniPaciente,dniMedico,especialidad,fechaHora,estado
 37,20000004,10000005,Cardiología,2025-11-19 09:00,Realizado
 38,45123789,10000008,Traumatología,2025-11-19 12:30,Realizado
 39,2,1,Cardiología,2025-11-20 09:00,Realizado
-40,45123789,48456123,Cardiología,2025-11-20 14:30,Pendiente
+40,45123789,48456123,Cardiología,2025-11-20 14:30,Cancelado
 41,20000003,10000003,Dermatología,2025-11-20 16:00,Cancelado
 42,20000016,48456123,Dermatología,2025-11-21 11:00,Cancelado
-43,20000012,1,Pediatría,2025-11-22 11:00,Pendiente
-44,20000017,10000005,Pediatría,2025-11-23 11:00,Cancelado
-45,20000011,10000006,Pediatría,2025-11-24 11:00,Cancelado
+43,20000012,1,Pediatría,2025-11-22 11:00,Realizado
+44,20000017,10000005,Pediatría,2025-11-23 11:00,Pendiente
+45,20000011,10000006,Pediatría,2025-11-24 11:00,Pendiente
 46,20000012,10000010,Pediatría,2025-11-25 11:00,Cancelado
 47,20000009,48456123,Traumatología,2025-11-26 11:00,Cancelado
 48,20000017,10000003,Dermatología,2025-11-27 11:00,Cancelado
@@ -51,7 +51,7 @@ idTurno,dniPaciente,dniMedico,especialidad,fechaHora,estado
 50,20000006,10000005,Cardiología,2025-11-29 11:00,Cancelado
 51,20000012,10000003,Pediatría,2025-11-30 11:00,Pendiente
 52,20000019,10000007,Cardiología,2025-12-01 11:30,Pendiente
-53,20000004,10000010,Dermatología,2025-12-02 12:00,Pendiente
+53,20000004,10000010,Dermatología,2025-12-05 12:00,Pendiente
 54,20000009,10000010,Cardiología,2025-12-03 13:30,Cancelado
 55,20000018,10000010,Cardiología,2025-12-04 14:00,Pendiente
 56,2,10000005,Cardiología,2025-12-05 10:30,Pendiente
@@ -64,5 +64,6 @@ idTurno,dniPaciente,dniMedico,especialidad,fechaHora,estado
 63,20000011,10000008,Ginecología,2025-12-12 12:00,Pendiente
 64,20000007,10000007,Ginecología,2025-12-13 13:30,Pendiente
 65,45123789,10000009,Dermatología,2025-12-14 14:00,Cancelado
-66,20000016,1,Clínica Médica,2025-12-15 10:30,Realizado
+66,20000016,1,Clínica Médica,2025-12-15 10:30,Pendiente
 67,20000006,48456123,Clínica Médica,2025-12-16 11:00,Pendiente
+68,45123456,48456123,Cardiología,2025-11-28 12:00,Pendiente

@@ -17,6 +17,8 @@ import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
+import jujava.mediturnos.presentacion.controladores.FormularioModificarTurnoViewController;
+import jujava.mediturnos.presentacion.modelos.TurnoModel;
 
 import java.io.IOException;
 
@@ -201,6 +203,24 @@ public class MainViewController {
         } catch (IOException e) {
             e.printStackTrace();
             dataController.showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Error", "No se pudo cargar la vista: " + fxmlFile);
+        }
+    }
+
+    public void loadViewModificarTurno(TurnoModel turnoSeleccionado) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AppMain.class.getResource("/jujava/mediturnos/formulario-modificar-turno-view.fxml"));
+            Node view = loader.load();
+
+            // Obtenemos el controlador y le pasamos las dependencias Y el turno
+            FormularioModificarTurnoViewController controller = loader.getController();
+            controller.initData(dataController, this, turnoSeleccionado);
+
+            contentArea.setCenter(view);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            dataController.showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Error", "No se pudo cargar la vista de modificación de turno.");
         }
     }
 }
